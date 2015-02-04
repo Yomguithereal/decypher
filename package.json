@@ -1,0 +1,26 @@
+{
+  "name": "decypher",
+  "version": "0.1.0",
+  "description": "Yesql-like cypher query loader for node.js",
+  "main": "decypher.js",
+  "scripts": {
+    "test": "mocha -R spec ./test/unit.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Yomguithereal/decypher.git"
+  },
+  "keywords": [
+    "cypher",
+    "neo4j"
+  ],
+  "author": "Yomguithereal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Yomguithereal/decypher/issues"
+  },
+  "homepage": "https://github.com/Yomguithereal/decypher",
+  "devDependencies": {
+    "mocha": "^2.1.0"
+  }
+}
