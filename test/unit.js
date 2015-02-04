@@ -23,7 +23,7 @@ describe('decypher', function() {
     it('should parse single query files.', function() {
       assert.deepEqual(
         parseResource('single'),
-        [{name: 'single', body: 'MATCH (b:Book)\nRETURN b;'}]
+        [{name: 'query', body: 'MATCH (b:Book)\nRETURN b;'}]
       );
     });
 
@@ -57,7 +57,7 @@ describe('decypher', function() {
     it('should return the query\'s body when only one query is present.', function() {
       assert.deepEqual(
         decypher(__dirname + '/resources/single.cypher'),
-        'MATCH (b:Book)\nRETURN b;'
+        {query: 'MATCH (b:Book)\nRETURN b;'}
       );
 
       assert.deepEqual(
@@ -77,6 +77,17 @@ describe('decypher', function() {
       assert.deepEqual(
         decypher({
           single: __dirname + '/resources/single.cypher',
+          multiple: __dirname + '/resources/multiple.cypher'
+        }),
+        {
+          single: {query: 'MATCH (b:Book)\nRETURN b;'},
+          multiple: {one: 'MATCH (b:Book)\nRETURN b;', two: 'MATCH (v:Vocabulary)\nRETURN v;'}
+        }
+      );
+
+      assert.deepEqual(
+        decypher({
+          single: __dirname + '/resources/lone.cypher',
           multiple: __dirname + '/resources/multiple.cypher'
         }),
         {

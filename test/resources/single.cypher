@@ -1,3 +1,3 @@
-// name: single
+// name: query
 MATCH (b:Book)
 RETURN b;

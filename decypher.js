@@ -50,7 +50,7 @@ function parseBlock(block) {
 function resolve(string, path) {
   var blocks = parse(string);
 
-  if (blocks.length <= 1) {
+  if (blocks.length <= 1 && !blocks[0].name) {
     return blocks[0].body;
   }
   else {
