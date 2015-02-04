@@ -85,7 +85,7 @@ function decypher(spec, encoding) {
 
 // Version
 Object.defineProperty(decypher, 'version', {
-  value: '0.1.0'
+  value: '0.1.1'
 });
 
 decypher.parse = parse;

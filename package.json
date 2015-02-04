@@ -1,6 +1,6 @@
 {
   "name": "decypher",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Yesql-like cypher query loader for node.js",
   "main": "decypher.js",
   "scripts": {
