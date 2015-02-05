@@ -103,5 +103,32 @@ describe('decypher', function() {
         decypher(__dirname + '/resources/double.cypher');
       }, /twice/);
     });
+
+    it('should be possible to import a whole folder at once.', function() {
+
+      assert.deepEqual(
+        decypher(__dirname + '/resources/folder'),
+        {
+          single: {query: 'MATCH (b:Book)\nRETURN b;'},
+          multiple: {one: 'MATCH (b:Book)\nRETURN b;', two: 'MATCH (v:Vocabulary)\nRETURN v;'}
+        }
+      );
+    });
+
+    it('should be possible to import a whole folder and choosing your extension.', function() {
+      assert.deepEqual(
+        decypher(__dirname + '/resources/folder', 'cql'),
+        {
+          single: {query: 'MATCH (b:Book)\nRETURN b;'}
+        }
+      );
+
+      assert.deepEqual(
+        decypher(__dirname + '/resources/folder', '.cql'),
+        {
+          single: {query: 'MATCH (b:Book)\nRETURN b;'}
+        }
+      );
+    });
   });
 });

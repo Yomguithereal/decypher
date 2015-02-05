@@ -5,7 +5,8 @@
  * Simple node module designed to fetch external cypher query files in order to
  * load them for later use.
  */
-var fs = require('fs');
+var fs = require('fs'),
+    path = require('path');
 
 // Helpers
 function isPlainObject(v) {
@@ -67,10 +68,31 @@ function resolve(string, path) {
 }
 
 // Main function
-function decypher(spec, encoding) {
+function decypher(spec, extension) {
+  extension = (extension || 'cypher').replace(/^\./, '');
 
   if (typeof spec === 'string') {
-    return resolve(fs.readFileSync(spec, 'utf-8'), spec);
+
+    // Folder-behaviour
+    if (fs.lstatSync(spec).isDirectory()) {
+      var r = new RegExp('(.*)\\.' + extension + '$'),
+          o = {};
+
+      var items = fs.readdirSync(spec)
+        .filter(function(filename) {
+          return fs.lstatSync(path.join(spec, filename)).isFile() &&
+                 ~filename.search(r);
+        })
+        .forEach(function(filename) {
+          var p = path.join(spec, filename);
+          o[filename.match(r)[1]] = resolve(fs.readFileSync(p, 'utf-8'), p);
+        });
+
+      return o;
+    }
+    else {
+      return resolve(fs.readFileSync(spec, 'utf-8'), spec);
+    }
   }
   else if (isPlainObject(spec)) {
     var o = {};

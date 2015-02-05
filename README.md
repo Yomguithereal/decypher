@@ -78,6 +78,19 @@ decypher({
     second: 'MATCH (v:Vocabulary)\nRETURN v;'
   }
 }
+
+// Loading the content of a folder
+decypher('./path-to-queries-folder');
+>>> {
+  single: 'MATCH (n)-[r]-(t)\nRETURN n,r,t LIMIT 100;',
+  multiple: {
+    first: 'MATCH (b:Book)\nRETURN b;',
+    second: 'MATCH (v:Vocabulary)\nRETURN v;'
+  }
+}
+
+// Choosing a different extension when loading a folder
+decypher('./path-to-queries-folder', 'cql');
 ```
 
 ## Contribution
