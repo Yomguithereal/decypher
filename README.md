@@ -80,7 +80,12 @@ decypher({
 }
 
 // Loading the content of a folder
-decypher('./path-to-queries-folder');
+
+// folder/
+//     - single.cypher
+//     - multiple.cypher
+
+decypher('./folder');
 >>> {
   single: 'MATCH (n)-[r]-(t)\nRETURN n,r,t LIMIT 100;',
   multiple: {
