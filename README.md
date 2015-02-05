@@ -82,8 +82,8 @@ decypher({
 // Loading the content of a folder
 
 // folder/
-//     - single.cypher
-//     - multiple.cypher
+//   - single.cypher
+//   - multiple.cypher
 
 decypher('./folder');
 >>> {
