@@ -2,9 +2,9 @@
 
 # Decypher
 
-**decypher** is a node.js library aiming at loading cypher queries from external files so you can use them later in your code.
+**decypher** is a node.js library aiming at loading [cypher](http://neo4j.com/developer/cypher-query-language/) queries from external files so you can use them later in your code.
 
-The library's philosophy is quite similar to the Clojure [Yesql](http://neo4j.com/developer/cypher-query-language/)'s one.
+The library's philosophy is quite similar to the Clojure [Yesql](https://github.com/krisajenkins/yesql)'s one.
 
 ## Installation
 
