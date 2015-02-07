@@ -50,7 +50,7 @@ RETURN v;
 
 ### Decyphering
 
-To load you queries, just require **decypher** and use it to load your queries:
+Just require **decypher** and use it to load your queries:
 
 ```js
 var decypher = require('decypher');
