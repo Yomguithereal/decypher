@@ -76,8 +76,15 @@ QueryBuilder.prototype.compile = function() {
 QueryBuilder.prototype.toString = QueryBuilder.prototype.compile;
 
 // Retrieving the query's parameters
-QueryBuilder.prototype.params = function() {
-  return this._params;
+QueryBuilder.prototype.params = function(params) {
+  if (!params)
+    return this._params;
+
+  if (!isPlainObject(params))
+    throw Error('decypher.QueryBuilder.params: passed parameters should be a plain object.');
+
+  assign(this._params, params);
+  return this;
 };
 
 // Attaching a method to the prototype for each statement
