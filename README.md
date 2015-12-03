@@ -103,6 +103,8 @@ decypher('./path-to-queries-folder', 'cql');
 
 ## Query builder
 
+Note that this query builder is widely inspired by the [query-builder](https://github.com/shesek/cypher-query) package by [@shesek](https://github.com/shesek) but fixed and updated to support cypher's latest evolutions.
+
 ```js
 var cypher = require('decypher').builder;
 
