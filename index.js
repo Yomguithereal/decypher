@@ -14,7 +14,7 @@ Object.defineProperty(loader, 'version', {
 
 // Attaching the other classes to the loader
 loader.batch = null;
-loader.cypher = builder;
+loader.builder = builder;
 
 // Exporting
 module.exports = loader;

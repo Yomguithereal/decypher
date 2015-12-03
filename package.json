@@ -1,7 +1,7 @@
 {
   "name": "decypher",
   "version": "0.1.2",
-  "description": "Yesql-like cypher query loader for node.js",
+  "description": "A handful of cypher utilities for Node.js",
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec ./test"
@@ -12,7 +12,12 @@
   },
   "keywords": [
     "cypher",
-    "neo4j"
+    "neo4j",
+    "utilities",
+    "query builder",
+    "query",
+    "builder",
+    "batch"
   ],
   "author": "Yomguithereal",
   "license": "MIT",

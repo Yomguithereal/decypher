@@ -2,9 +2,12 @@
 
 # Decypher
 
-**decypher** is a node.js library aiming at loading [cypher](http://neo4j.com/developer/cypher-query-language/) queries from external files so you can use them later in your code.
+**decypher** is a node.js library packing a handful of utilities to deal with [cypher](http://neo4j.com/developer/cypher-query-language/) queries.
 
-The library's philosophy is quite similar to the Clojure [Yesql](https://github.com/krisajenkins/yesql)'s one.
+It includes the following:
+
+* A [Yesql](https://github.com/krisajenkins/yesql)-like [query loader](#query-loader).
+* A simple [query builder](#query-builder).
 
 ## Installation
 
@@ -20,7 +23,7 @@ or from github if you need the latest development version:
 npm install git+https://github.com/Yomguithereal/decypher.git
 ```
 
-## Usage
+## Query loader
 
 ### Query files
 
@@ -98,6 +101,43 @@ decypher('./folder');
 decypher('./path-to-queries-folder', 'cql');
 ```
 
+## Query builder
+
+```js
+var cypher = require('decypher').builder;
+
+// Creating a query
+var query = cypher()
+  .match('MATCH (n:Node)')
+  .where('n.title = {title}', {title: 'The best title'})
+  .return('n');
+
+// Compiling to string
+query.compile();
+// or
+query.toString();
+// MATCH (n:Node)
+// WHERE n.title = {title}
+// RETURN n;'
+
+// Retrieving the query's parameters
+query.params();
+>>> {
+  title: 'The best title'
+}
+
+// Note that multi words statements like `ORDER BY`
+// have to be written in camel-case:
+query.orderBy('n.title');
+
+// You can also set a bunch of params at once
+query.params({whatever: 'is needed'});
+
+// Finally, you can add arbitrary parts to the query if required
+query.add('anything you want');
+query.add('with {param}', {param: 'heart'});
+```
+
 ## Contribution
 
 Contributions are of course more than welcome. Be sure to add and pass any relevant unit tests before submitting any code.
@@ -112,3 +152,12 @@ npm install
 # Running unit tests
 npm test
 ```
+
+## Roadmap
+
+* Some helpers
+* A batch
+
+## License
+
+[MIT](LICENSE.txt)

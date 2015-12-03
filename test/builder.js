@@ -4,7 +4,7 @@
  *
  */
 var assert = require('assert'),
-    cypher = require('../index.js').cypher;
+    cypher = require('../index.js').builder;
 
 describe('Query Builder', function() {
 
