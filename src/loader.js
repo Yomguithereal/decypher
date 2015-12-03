@@ -7,7 +7,7 @@
  */
 var fs = require('fs'),
     path = require('path'),
-    isPlainObject = require('lodash.isPlainObject');
+    isPlainObject = require('lodash.isplainobject');
 
 /**
  * Helpers.
