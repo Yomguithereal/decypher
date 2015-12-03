@@ -4,7 +4,7 @@
  *
  */
 var assert = require('assert'),
-    decypher = require('../decypher.js'),
+    decypher = require('../src/loader.js'),
     fs = require('fs'),
     parse = decypher.parse;
 
@@ -16,7 +16,7 @@ function parseResource(path) {
   return parse(load(path));
 }
 
-describe('decypher', function() {
+describe('Loader', function() {
 
   describe('parser', function() {
 
