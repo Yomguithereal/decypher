@@ -1,10 +1,10 @@
 /**
- * Decypher Unit Tests
- * ====================
+ * Decypher Loader Unit Tests
+ * ===========================
  *
  */
 var assert = require('assert'),
-    decypher = require('../src/loader.js'),
+    decypher = require('../index.js'),
     fs = require('fs'),
     parse = decypher.parse;
 

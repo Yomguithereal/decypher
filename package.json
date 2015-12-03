@@ -4,7 +4,7 @@
   "description": "Yesql-like cypher query loader for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec ./test/unit.js"
+    "test": "mocha -R spec ./test"
   },
   "repository": {
     "type": "git",
