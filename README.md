@@ -182,6 +182,49 @@ helpers.escapeLiteralMap({
 >>> '{name: {name}, number: 2}'
 ```
 
+*Building node patterns*
+
+```js
+var helpers = require('decypher').helpers;
+
+// Possible options are:
+//   * `identifier`: a string
+//   * `label`: a string
+//   * `data`:
+//       - if string, will produce a single parameter
+//       - if object, will stringify it
+//   * `paramKeys`: will be passed to escapeLiteralMap when stringifying data
+
+helpers.nodePattern();
+>>> '()'
+
+helpers.nodePattern({
+  identifier: 'n',
+  label: 'Node'
+});
+>>> '(n:Node)'
+
+helpers.nodePattern({
+  label: 'Node',
+  data: {title: 'Hello'}
+});
+>>> '(n:Node {title: "Hello"})'
+
+helpers.nodePattern({
+  identifier: 'n',
+  data: 'paramName'
+});
+>>> '(n {paramName})'
+
+helpers.nodePattern({
+  label: 'Chapter',
+  data: {title: 'title'},
+  paramKeys: ['title']
+});
+>>> '(:Chapter {title: {title}})'
+```
+
+
 *Building relationship patterns*
 
 ```js
@@ -215,9 +258,9 @@ helpers.relationshipPattern({
 helpers.relationshipPattern({
   direction: 'in',
   identifier: 'r',
-  data: 'order'
+  data: 'paramName'
 });
->>> '<-[r {order}]-'
+>>> '<-[r {paramName}]-'
 
 helpers.relationshipPattern({
   predicate: 'KNOWS',

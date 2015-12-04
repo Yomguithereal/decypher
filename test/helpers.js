@@ -31,6 +31,35 @@ describe('Helpers', function() {
     });
   });
 
+  describe('Node pattern', function() {
+
+    it('should properly build node patterns.', function() {
+      var patterns = [
+        '()',
+        '(n)',
+        '(n:Label)',
+        '(:Label)',
+        '({name: "John"})',
+        '(n {name: {name}})',
+        '(:Label {params})'
+      ];
+
+      var descriptors = [
+        undefined,
+        {identifier: 'n'},
+        {identifier: 'n', label: 'Label'},
+        {label: 'Label'},
+        {data: {name: 'John'}},
+        {identifier: 'n', data: {name: 'name'}, paramKeys: ['name']},
+        {label: 'Label', data: 'params'}
+      ];
+
+      patterns.forEach(function(pattern, i) {
+        assert.strictEqual(helpers.nodePattern(descriptors[i]), pattern);
+      });
+    });
+  });
+
   describe('Relationship pattern', function() {
 
     it('should properly build relationship patterns.', function() {

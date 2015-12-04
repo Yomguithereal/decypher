@@ -17,7 +17,7 @@ function escapeIdentifier(identifier) {
   return identifier;
 }
 
-// Stringify a literal map
+// Stringifying a literal map
 function escapeLiteralMap(object, paramKeys) {
   if (!isPlainObject(object))
     throw Error('decypher.helpers.escapeLiteralMap: first argument should be a plain object.');
@@ -40,7 +40,35 @@ function escapeLiteralMap(object, paramKeys) {
   return string + '}';
 }
 
-// Create a relationship pattern
+// Creating a node pattern
+function nodePattern(opts) {
+  opts = opts || {};
+
+  if (!isPlainObject(opts))
+    throw Error('decypher.helpers.nodePattern: given options should be a plain object.');
+
+  var pattern = '(';
+
+  if (opts.identifier)
+    pattern += escapeIdentifier(opts.identifier);
+
+  if (opts.label)
+    pattern += ':' + escapeIdentifier(opts.label);
+
+  if (opts.data) {
+    if (opts.identifier || opts.label)
+      pattern += ' ';
+
+    if (typeof opts.data === 'string')
+      pattern += '{' + opts.data + '}';
+    else
+      pattern += escapeLiteralMap(opts.data, opts.paramKeys);
+  }
+
+  return pattern + ')';
+}
+
+// Creating a relationship pattern
 function relationshipPattern(opts) {
   opts = opts || {};
 
@@ -89,5 +117,6 @@ function relationshipPattern(opts) {
 module.exports = {
   escapeIdentifier: escapeIdentifier,
   escapeLiteralMap: escapeLiteralMap,
+  nodePattern: nodePattern,
   relationshipPattern: relationshipPattern
 };
