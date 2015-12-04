@@ -13,8 +13,6 @@ var escapeIdentifier = helpers.escapeIdentifier,
     relationshipPattern = helpers.relationshipPattern;
 
 // TODO: RETURN rather object for nodes?
-// TODO: finish methods
-// TODO: edge data
 
 /**
  * Helpers.
