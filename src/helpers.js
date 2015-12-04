@@ -8,11 +8,6 @@ var isPlainObject = require('lodash.isplainobject');
 
 var KEYWORDS = require('./syntax.js').KEYWORDS;
 
-// Escaping a string
-function escape(string) {
-  return '"' + ('' + string).replace(/"/g, '\\"') + '"';
-}
-
 // Escaping an identifier
 function escapeIdentifier(identifier) {
 
@@ -22,12 +17,26 @@ function escapeIdentifier(identifier) {
   return identifier;
 }
 
+// Stringify a literal map
+function escapeLiteralMap(object) {
+  if (!isPlainObject(object))
+    throw Error('decypher.helpers.literalMap: given argument should be a plain object.');
+
+  var string = '{';
+
+  string += Object.keys(object).map(function(k) {
+    return escapeIdentifier(k) + ': ' + JSON.stringify(object[k]);
+  }).join(', ');
+
+  return string + '}';
+}
+
 // Create a relationship pattern
 function relationshipPattern(opts) {
   opts = opts || {};
 
   if (!isPlainObject(opts))
-    throw Error('decypher.helpers.relationshipPattern: given options should be an object.');
+    throw Error('decypher.helpers.relationshipPattern: given options should be a plain object.');
 
   var pattern = '';
 
@@ -36,7 +45,7 @@ function relationshipPattern(opts) {
   else
     pattern += '-';
 
-  if (opts.identifier || opts.predicate) {
+  if (opts.identifier || opts.predicate || opts.data) {
     pattern += '[';
 
     if (opts.identifier)
@@ -44,6 +53,16 @@ function relationshipPattern(opts) {
 
     if (opts.predicate)
       pattern += ':' + escapeIdentifier(opts.predicate);
+
+    if (opts.data) {
+      if (opts.identifier || opts.predicate)
+        pattern += ' ';
+
+      if (typeof opts.data === 'string')
+        pattern += '{' + opts.data + '}';
+      else
+        pattern += escapeLiteralMap(opts.data);
+    }
 
     pattern += ']';
   }
@@ -57,7 +76,7 @@ function relationshipPattern(opts) {
 }
 
 module.exports = {
-  escape: escape,
   escapeIdentifier: escapeIdentifier,
+  escapeLiteralMap: escapeLiteralMap,
   relationshipPattern: relationshipPattern
 };

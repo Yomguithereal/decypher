@@ -154,15 +154,6 @@ cypher.add('with {param}', {param: 'heart'});
 
 ## Helpers
 
-*Escaping strings*
-
-```js
-var helpers = require('decypher').helpers;
-
-helpers.escape('nasty "string"');
->>> '"nasty \"string\""'
-```
-
 *Escaping identifiers*
 
 ```js
@@ -170,6 +161,18 @@ var helpers = require('decypher').helpers;
 
 helpers.escapeIdentifier('Complex `Identifier`');
 >>> '`Complex ``Identifier```'
+```
+
+*Escaping literal maps*
+
+```js
+var helpers = require('decypher').helpers;
+
+helpers.escapeLiteralMap({
+  hello: 'world',
+  'complex key': 3
+});
+>>> '{hello: "world", `complex key`: 3}'
 ```
 
 *Building relationship patterns*

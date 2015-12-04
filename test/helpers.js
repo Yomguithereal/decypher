@@ -8,14 +8,6 @@ var assert = require('assert'),
 
 describe('Helpers', function() {
 
-  describe('Escape', function() {
-
-    it('should properly escape strings.', function() {
-      assert.strictEqual(helpers.escape('simple string'), '"simple string"');
-      assert.strictEqual(helpers.escape('complex " string'), '"complex \\" string"');
-    });
-  });
-
   describe('Escape identifier', function() {
 
     it('should properly escape identifiers.', function() {
@@ -23,6 +15,15 @@ describe('Helpers', function() {
       assert.strictEqual(helpers.escapeIdentifier('complex identifier'), '`complex identifier`');
       assert.strictEqual(helpers.escapeIdentifier('silly [!!] identifier'), '`silly [!!] identifier`');
       assert.strictEqual(helpers.escapeIdentifier('dangerous ` identifier'), '`dangerous `` identifier`');
+    });
+  });
+
+  describe('Escape literal map', function() {
+
+    it('should properly escape literal maps.', function() {
+
+      assert.deepEqual(helpers.escapeLiteralMap({hello: 'world', number: 2}), '{hello: "world", number: 2}');
+      assert.deepEqual(helpers.escapeLiteralMap({'problematic key': 'bad'}), '{`problematic key`: "bad"}');
     });
   });
 
@@ -38,7 +39,10 @@ describe('Helpers', function() {
         '-[r]->',
         '-[:PREDICATE]->',
         '<-[r:PREDICATE]-',
-        '-[`r 1`:`COMPLEX PREDICATE`]-'
+        '-[`r 1`:`COMPLEX PREDICATE`]-',
+        '-[r:PREDICATE {param}]->',
+        '-[{name: "John"}]-',
+        '<-[r:PREDICATE {number: 1, name: "John"}]-'
       ];
 
       var descriptors = [
@@ -50,7 +54,10 @@ describe('Helpers', function() {
         {direction: 'out', identifier: 'r'},
         {direction: 'out', predicate: 'PREDICATE'},
         {direction: 'in', identifier: 'r', predicate: 'PREDICATE'},
-        {identifier: 'r 1', predicate: 'COMPLEX PREDICATE'}
+        {identifier: 'r 1', predicate: 'COMPLEX PREDICATE'},
+        {direction: 'out', 'identifier': 'r', predicate: 'PREDICATE', data: 'param'},
+        {data: {name: 'John'}},
+        {direction: 'in', identifier: 'r', predicate: 'PREDICATE', data: {number: 1, name: 'John'}}
       ];
 
       patterns.forEach(function(pattern, i) {
