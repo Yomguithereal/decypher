@@ -6,7 +6,11 @@
  */
 var isPlainObject = require('lodash.isplainobject'),
     assign = require('lodash.assign'),
-    Query = require('./query.js');
+    Query = require('./query.js'),
+    helpers = require('./helpers.js');
+
+var escapeIdentifier = helpers.escapeIdentifier,
+    relationshipPattern = helpers.relationshipPattern;
 
 // TODO: RETURN rather object for nodes?
 // TODO: finish methods
@@ -48,7 +52,7 @@ Batch.prototype._externalNode = function(id, data) {
   var identifier = 'e' + id;
 
   if (!this.externalNodes[identifier])
-    this.externalNodes[identifier] = {id: id};
+    this.externalNodes[identifier] = {id: identifier};
 
   if (data)
     this.externalNodes[identifier].data = data;
@@ -176,8 +180,8 @@ Batch.prototype.delete = function() {
 Batch.prototype.query = function() {
   var query = new Query();
 
-  const matches = [],
-        lines = [];
+  var matches = [],
+      lines = [];
 
   //-- External nodes
   Object.keys(this.externalNodes).forEach(function(k) {
@@ -188,7 +192,7 @@ Batch.prototype.query = function() {
     matches.push({name: name, id: node.id});
 
     if (node.data)
-      lines.push({type: 'update', propName: propName, data: node.data});
+      lines.push({type: 'update', name: name, propName: propName, data: node.data});
   }, this);
 
   //-- Internal nodes
@@ -197,7 +201,7 @@ Batch.prototype.query = function() {
         name = 'n' + k,
         propName = 'p' + k;
 
-    lines.push({type: 'create', name: name, propName: name, data: node.data});
+    lines.push({type: 'create', name: name, propName: propName, data: node.data});
 
     node.labels.forEach(function(label) {
       lines.push({type: 'label', name: name, label: label});
@@ -206,8 +210,14 @@ Batch.prototype.query = function() {
 
   //-- Unlinks
   this.unlinks.forEach(function(unlink, i) {
-    query.match('(n' + unlink.from + ')-[r' + i + ':`' + unlink.predicate + '`]->(n' + unlink.to + ')');
-    query.delete('r' + i);
+    matches.push({
+      from: unlink.from,
+      predicate: unlink.predicate,
+      to: unlink.to,
+      index: i
+    });
+
+    lines.push({type: 'unrelate', index: i});
   });
 
   //-- Edges
@@ -222,8 +232,19 @@ Batch.prototype.query = function() {
 
   //-- Building the query
   matches.forEach(function(match) {
-    query.match('(' + match.name + ')');
-    query.where('id(' + match.name + ') = ' + match.id);
+    if (match.from) {
+      var pattern = relationshipPattern({
+        direction: 'out',
+        identifier: 'r' + match.index,
+        predicate: match.predicate
+      });
+
+      query.match('(n' + match.from + ')' + pattern + '(n' + match.to + ')');
+    }
+    else {
+      query.match('(' + match.name + ')');
+      query.where('id(' + match.name + ') = ' + match.id);
+    }
   });
 
   lines.forEach(function(line) {
@@ -236,14 +257,26 @@ Batch.prototype.query = function() {
       query.create('(' + line.name + ' {' + line.propName + '})', p);
     }
     else if (line.type === 'label') {
-      query.set(line.name + ':`' + line.label + '`');
+      query.set(line.name + ':`' + escapeIdentifier(line.label) + '`');
     }
     else if (line.type === 'relate') {
-      query.create('(n' + line.from + ')-[:`' + line.predicate + '`]->(n' + line.to + ')');
+      var pattern = relationshipPattern({
+        direction: 'out',
+        predicate: line.predicate
+      });
+
+      query.create('(n' + line.from + ')' + pattern + '(n' + line.to + ')');
+    }
+    else if (line.type === 'unrelate') {
+      query.delete('r' + line.index);
     }
   });
 
   return query;
+};
+
+Batch.prototype.build = function() {
+  return this.query().build();
 };
 
 module.exports = Batch;

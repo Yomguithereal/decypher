@@ -23,15 +23,16 @@ describe('Batch', function() {
     batch.unrelate(45, 'AGGREGATES', 46);
 
     var query = batch.query();
-    return;
+
     assert.deepEqual(
-      query.compile().split('\n'),
+      query.statements(),
       [
+
         'MATCH (ne45)',
-        'WHERE id(ne45) = 45',
+        'WHERE id(ne45) = e45',
         'MATCH (ne46)',
-        'WHERE id(ne46) = 46',
-        'MATCH (ne45)-[r0:`AGGREGATES`]->(ne46)',
+        'WHERE id(ne46) = e46',
+        'MATCH (ne45)-[r0:AGGREGATES]->(ne46)',
         'SET ne45 += {pe45}',
         'CREATE (ni0 {pi0})',
         'SET ni0:`ClassifiedItem`',
@@ -41,9 +42,9 @@ describe('Batch', function() {
         'CREATE (ni2 {pi2})',
         'SET ni2:`Item`',
         'DELETE r0',
-        'CREATE (ni0)-[:`AGGREGATES`]->(ni1)',
-        'CREATE (ni0)-[:`AGGREGATES`]->(ni2)',
-        'CREATE (ne45)-[:`AGGREGATES`]->(ni2);'
+        'CREATE (ni0)-[:AGGREGATES]->(ni1)',
+        'CREATE (ni0)-[:AGGREGATES]->(ni2)',
+        'CREATE (ne45)-[:AGGREGATES]->(ni2)'
       ]
     );
 
