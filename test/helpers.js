@@ -47,7 +47,8 @@ describe('Helpers', function() {
         '-[r:PREDICATE {param}]->',
         '-[{name: "John"}]-',
         '<-[r:PREDICATE {number: 1, name: "John"}]-',
-        '-[r {name: {name}}]->'
+        '-[r {name: {name}}]->',
+        '-[r:ONE|:TWO]->'
       ];
 
       var descriptors = [
@@ -63,7 +64,8 @@ describe('Helpers', function() {
         {direction: 'out', 'identifier': 'r', predicate: 'PREDICATE', data: 'param'},
         {data: {name: 'John'}},
         {direction: 'in', identifier: 'r', predicate: 'PREDICATE', data: {number: 1, name: 'John'}},
-        {direction: 'out', identifier: 'r', data: {name: 'name'}, paramKeys: ['name']}
+        {direction: 'out', identifier: 'r', data: {name: 'name'}, paramKeys: ['name']},
+        {direction: 'out', identifier: 'r', predicate: ['ONE', 'TWO']}
       ];
 
       patterns.forEach(function(pattern, i) {

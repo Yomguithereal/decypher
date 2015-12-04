@@ -61,7 +61,9 @@ function relationshipPattern(opts) {
       pattern += escapeIdentifier(opts.identifier);
 
     if (opts.predicate)
-      pattern += ':' + escapeIdentifier(opts.predicate);
+      pattern += [].concat(opts.predicate).map(function(predicate) {
+        return ':' + escapeIdentifier(predicate);
+      }).join('|');
 
     if (opts.data) {
       if (opts.identifier || opts.predicate)

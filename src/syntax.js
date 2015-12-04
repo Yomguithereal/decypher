@@ -43,6 +43,7 @@ var STATEMENTS = [
 var KEYWORDS = {};
 
 var additionalKeywords = [
+  'AND',
   'AS',
   'ASC',
   'DESC',
@@ -50,8 +51,10 @@ var additionalKeywords = [
   'FALSE',
   'IS',
   'NULL',
+  'OR',
   'STARTS',
-  'TRUE'
+  'TRUE',
+  'XOR'
 ];
 
 STATEMENTS.concat(additionalKeywords).forEach(function(statement) {

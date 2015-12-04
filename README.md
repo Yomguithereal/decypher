@@ -189,8 +189,8 @@ var helpers = require('decypher').helpers;
 
 // Possible options are:
 //   * `direction`: "in" or "out"
-//   * `identifier`
-//   * `predicate`
+//   * `identifier`: a string
+//   * `predicate`: a string or an array of strings
 //   * `data`:
 //       - if string, will produce a single parameter
 //       - if object, will stringify it
@@ -205,6 +205,12 @@ helpers.relationshipPattern({
   predicate: 'KNOWS'
 });
 >>> '-[r:KNOWS]->'
+
+helpers.relationshipPattern({
+  direction: 'in',
+  predicate: ['PLAYS_IN', 'KNOWS']
+});
+>>> '<-[:PLAYS_IN|:KNOWS]-'
 
 helpers.relationshipPattern({
   direction: 'in',
