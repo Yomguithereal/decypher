@@ -8,6 +8,7 @@ It includes the following:
 
 * A [Yesql](https://github.com/krisajenkins/yesql)-like [query loader](#query-loader).
 * A simple [query builder](#query-builder).
+* Miscellaneous [helpers](#helpers).
 
 ## Installation
 
@@ -149,6 +150,47 @@ cypher.params({whatever: 'is needed'});
 // Finally, you can add arbitrary parts to the query if required
 cypher.add('anything you want');
 cypher.add('with {param}', {param: 'heart'});
+```
+
+## Helpers
+
+*Escaping strings*
+
+```js
+var helpers = require('decypher').helpers;
+
+helpers.escape('nasty "string"');
+>>> '"nasty \"string\""'
+```
+
+*Escaping identifiers*
+
+```js
+var helpers = require('decypher').helpers;
+
+helpers.escapeIdentifier('Complex `Identifier`');
+>>> '`Complex ``Identifier```'
+```
+
+*Building relationship patterns*
+
+```js
+var helpers = require('decypher').helpers;
+
+// Possible options are:
+//   * `direction`: "in" or "out"
+//   * `identifier`
+//   * `predicate`
+
+helpers.relationshipPattern();
+>>> '--'
+
+helpers.relationshipPattern({
+  direction: 'out',
+  identifier: 'r',
+  predicate: 'KNOWS'
+});
+>>> '-[r:KNOWS]->'
 ```
 
 ## Contribution
