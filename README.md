@@ -106,38 +106,49 @@ decypher('./path-to-queries-folder', 'cql');
 Note that this query builder is widely inspired by the [query-builder](https://github.com/shesek/cypher-query) package by [@shesek](https://github.com/shesek) but fixed and updated to support cypher's latest evolutions.
 
 ```js
-var cypher = require('decypher').builder;
+var Query = require('decypher').Query;
 
 // Creating a query
-var query = cypher()
+var cypher = new Query()
   .match('MATCH (n:Node)')
   .where('n.title = {title}', {title: 'The best title'})
   .return('n');
 
 // Compiling to string
-query.compile();
+cypher.compile();
 // or
-query.toString();
+cypher.toString();
 // MATCH (n:Node)
 // WHERE n.title = {title}
-// RETURN n;'
+// RETURN n;
 
 // Retrieving the query's parameters
-query.params();
+cypher.params();
 >>> {
   title: 'The best title'
 }
 
+// Retrieving the query's statements as an array
+cypher.statements();
+>>> [
+  'MATCH (n:Node)',
+  'WHERE n.title = {title}',
+  'RETURN n'
+]
+
+// Retrieving all of the above at once
+var {query, params, statements} = cypher.build();
+
 // Note that multi words statements like `ORDER BY`
 // have to be written in camel-case:
-query.orderBy('n.title');
+cypher.orderBy('n.title');
 
 // You can also set a bunch of params at once
-query.params({whatever: 'is needed'});
+cypher.params({whatever: 'is needed'});
 
 // Finally, you can add arbitrary parts to the query if required
-query.add('anything you want');
-query.add('with {param}', {param: 'heart'});
+cypher.add('anything you want');
+cypher.add('with {param}', {param: 'heart'});
 ```
 
 ## Contribution

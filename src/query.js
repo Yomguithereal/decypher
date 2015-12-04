@@ -7,6 +7,9 @@
 var assign = require('lodash.assign'),
     isPlainObject = require('lodash.isplainobject');
 
+/**
+ * Constants.
+ */
 const STATEMENTS = [
   'ASSERT',
   'CASE',
@@ -40,11 +43,17 @@ const STATEMENTS = [
   'WHERE'
 ];
 
+/**
+ * Helpers.
+ */
 function capitalize(string) {
   return string.charAt(0).toUpperCase(string) + string.slice(1);
 }
 
-function QueryBuilder() {
+/**
+ * Class.
+ */
+function Query() {
 
   // Properties
   this._statements = [];
@@ -52,13 +61,13 @@ function QueryBuilder() {
 }
 
 // Adding an arbitrary part to the query
-QueryBuilder.prototype.add = function(part, params) {
+Query.prototype.add = function(part, params) {
 
   if (typeof part !== 'string')
-    throw Error('decypher.QueryBuilder.add: first parameter should be a string.');
+    throw Error('decypher.Query.add: first parameter should be a string.');
 
   if (params && !isPlainObject(params))
-    throw Error('decypher.QueryBuilder.add: second parameter should be a plain object.');
+    throw Error('decypher.Query.add: second parameter should be a plain object.');
 
   this._statements.push(part);
 
@@ -68,23 +77,36 @@ QueryBuilder.prototype.add = function(part, params) {
   return this;
 };
 
-// Compiling the query
-QueryBuilder.prototype.compile = function() {
-  return this._statements.join('\n') + ';';
+// Retrieving statements
+Query.prototype.statements = function() {
+  return this._statements.slice(0);
 };
 
-QueryBuilder.prototype.toString = QueryBuilder.prototype.compile;
+// Compiling the query
+Query.prototype.compile = function() {
+  return this._statements.join('\n') + ';';
+};
+Query.prototype.toString = Query.prototype.compile;
 
 // Retrieving the query's parameters
-QueryBuilder.prototype.params = function(params) {
+Query.prototype.params = function(params) {
   if (!params)
     return this._params;
 
   if (!isPlainObject(params))
-    throw Error('decypher.QueryBuilder.params: passed parameters should be a plain object.');
+    throw Error('decypher.Query.params: passed parameters should be a plain object.');
 
   assign(this._params, params);
   return this;
+};
+
+// Building the query
+Query.prototype.build = function() {
+  return {
+    query: this.compile(),
+    params: this.params(),
+    statements: this.statements()
+  };
 };
 
 // Attaching a method to the prototype for each statement
@@ -95,15 +117,13 @@ STATEMENTS.forEach(function(statement) {
 
   var methodName = tokens[0] + tokens.slice(1).map(capitalize).join('');
 
-  QueryBuilder.prototype[methodName] = function(part, params) {
+  Query.prototype[methodName] = function(part, params) {
 
     if (typeof part !== 'string')
-      throw Error('decypher.QueryBuilder.' + methodName + ': first parameter should be a string.');
+      throw Error('decypher.Query.' + methodName + ': first parameter should be a string.');
 
     return this.add(statement + ' ' + part, params);
   };
 });
 
-module.exports = function() {
-  return new QueryBuilder();
-};
+module.exports = Query;

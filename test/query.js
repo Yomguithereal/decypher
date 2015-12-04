@@ -4,12 +4,12 @@
  *
  */
 var assert = require('assert'),
-    cypher = require('../index.js').builder;
+    Query = require('../index.js').Query;
 
-describe('Query Builder', function() {
+describe('Query', function() {
 
   it('should be possible to build a simple query.', function() {
-    var query = cypher()
+    var query = new Query()
       .match('(n:Label)')
       .where('n.title = "whatever"')
       .orderBy('n.title')
@@ -19,16 +19,22 @@ describe('Query Builder', function() {
       'MATCH (n:Label)',
       'WHERE n.title = "whatever"',
       'ORDER BY n.title',
-      'RETURN n;'
+      'RETURN n'
     ];
 
-    assert.strictEqual(query.compile(), expected.join('\n'));
+    assert.deepEqual(query.statements(), expected);
+    assert.strictEqual(query.compile(), expected.join('\n') + ';');
     assert.strictEqual(query.compile(), query.toString());
     assert.deepEqual(query.params(), {});
+    assert.deepEqual(query.build(), {
+      query: query.compile(),
+      params: query.params(),
+      statements: query.statements()
+    });
   });
 
   it('should be possible to pass parameters on the fly.', function() {
-    var query = cypher()
+    var query = new Query()
       .match('(n:Label)')
       .where('n.title = {title}', {title: 'whatever'})
       .orderBy('n.title')
@@ -54,7 +60,7 @@ describe('Query Builder', function() {
   });
 
   it('should be possible to pass every parameters at once.', function() {
-    var query = cypher()
+    var query = new Query()
       .match('(n:Label)')
       .where('n.title = {title}')
       .orderBy('n.title')
@@ -85,7 +91,7 @@ describe('Query Builder', function() {
   });
 
   it('should be possible to chain matches.', function() {
-    var query = cypher()
+    var query = new Query()
       .match('(n:Label)')
       .match('(o:Other)')
       .where('n.title = "whatever"')
@@ -104,7 +110,7 @@ describe('Query Builder', function() {
   });
 
   it('should be possible to add arbitrary parts.', function() {
-    var query = cypher()
+    var query = new Query()
       .add('THIS is not valid')
       .add('BUT could very well be')
       .return('the future');
