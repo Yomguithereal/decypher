@@ -7,41 +7,7 @@
 var assign = require('lodash.assign'),
     isPlainObject = require('lodash.isplainobject');
 
-/**
- * Constants.
- */
-const STATEMENTS = [
-  'ASSERT',
-  'CASE',
-  'CREATE',
-  'CREATE CONSTRAINT ON',
-  'CREATE INDEX ON',
-  'CREATE UNIQUE',
-  'DELETE',
-  'DROP CONSTRAINT ON',
-  'DROP INDEX ON',
-  'ELSE',
-  'FOREACH',
-  'LIMIT',
-  'MATCH',
-  'MERGE',
-  'ON CREATE SET',
-  'ON MATCH SET',
-  'OPTIONAL MATCH',
-  'ORDER BY',
-  'REMOVE',
-  'RETURN',
-  'SET',
-  'SKIP',
-  'START',
-  'THEN',
-  'UNION',
-  'UNION ALL',
-  'UNWIND',
-  'USING INDEX',
-  'WITH',
-  'WHERE'
-];
+var STATEMENTS = require('./syntax.js').STATEMENTS;
 
 /**
  * Helpers.
