@@ -26,23 +26,6 @@ function Query() {
   this._params = {};
 }
 
-// Adding an arbitrary part to the query
-Query.prototype.add = function(part, params) {
-
-  if (typeof part !== 'string')
-    throw Error('decypher.Query.add: first parameter should be a string.');
-
-  if (params && !isPlainObject(params))
-    throw Error('decypher.Query.add: second parameter should be a plain object.');
-
-  this._statements.push(part);
-
-  if (params)
-    assign(this._params, params);
-
-  return this;
-};
-
 // Retrieving statements
 Query.prototype.statements = function() {
   return this._statements.slice(0);
@@ -76,19 +59,40 @@ Query.prototype.build = function() {
 };
 
 // Attaching a method to the prototype for each statement
-STATEMENTS.forEach(function(statement) {
+STATEMENTS.concat(['']).forEach(function(statement) {
   var tokens = statement
     .toLowerCase()
     .split(' ');
 
-  var methodName = tokens[0] + tokens.slice(1).map(capitalize).join('');
+  var methodName = statement ?
+    tokens[0] + tokens.slice(1).map(capitalize).join('') :
+    'add';
 
-  Query.prototype[methodName] = function(part, params) {
+  Query.prototype[methodName] = function(parts, params) {
+    if (params && !isPlainObject(params))
+      throw Error('decypher.Query.add: second parameter should be a plain object.');
 
-    if (typeof part !== 'string')
+    parts = [].concat(parts);
+
+    var valid = parts.every(function(part) {
+      return typeof part === 'string';
+    });
+
+    if (!valid)
       throw Error('decypher.Query.' + methodName + ': first parameter should be a string.');
 
-    return this.add(statement + ' ' + part, params);
+    var string = '';
+
+    if (statement)
+      string += statement + ' ';
+
+    string += parts.join(', ');
+
+    this._statements.push(string);
+
+    assign(this._params, params);
+
+    return this;
   };
 });
 

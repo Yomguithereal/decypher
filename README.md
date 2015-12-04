@@ -147,6 +147,11 @@ cypher.orderBy('n.title');
 // You can also set a bunch of params at once
 cypher.params({whatever: 'is needed'});
 
+// If you need to pass multiple query parts at once & separated by a comma
+// just pass an array of strings instead of a single string.
+cypher.create(['(a:Actor)', '(m:Movie)']);
+>>> 'CREATE (a:Actor), (m:Movie)'
+
 // Finally, you can add arbitrary parts to the query if required
 cypher.add('anything you want');
 cypher.add('with {param}', {param: 'heart'});

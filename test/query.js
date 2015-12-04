@@ -123,4 +123,18 @@ describe('Query', function() {
 
     assert.strictEqual(query.compile(), expected.join('\n'));
   });
+
+  it('should be possible to add multipart statements.', function() {
+    var query = new Query()
+      .create(['(a:Actor)', '(b:Film)'])
+      .return('a, b');
+
+    var expected = [
+      'CREATE (a:Actor), (b:Film)',
+      'RETURN a, b'
+    ];
+
+    assert.deepEqual(query.statements(), expected);
+    assert.strictEqual(query.compile(), expected.join('\n') + ';');
+  });
 });
