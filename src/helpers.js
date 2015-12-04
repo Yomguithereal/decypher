@@ -18,14 +18,23 @@ function escapeIdentifier(identifier) {
 }
 
 // Stringify a literal map
-function escapeLiteralMap(object) {
+function escapeLiteralMap(object, paramKeys) {
   if (!isPlainObject(object))
-    throw Error('decypher.helpers.literalMap: given argument should be a plain object.');
+    throw Error('decypher.helpers.escapeLiteralMap: first argument should be a plain object.');
+
+  paramKeys = paramKeys || [];
+
+  if (!Array.isArray(paramKeys))
+    throw Error('decypher.helpers.escapeLiteralMap: second argument should be an array.');
 
   var string = '{';
 
   string += Object.keys(object).map(function(k) {
-    return escapeIdentifier(k) + ': ' + JSON.stringify(object[k]);
+    var value = ~paramKeys.indexOf(k) ?
+      '{' + object[k] + '}' :
+      JSON.stringify(object[k]);
+
+    return escapeIdentifier(k) + ': ' + value;
   }).join(', ');
 
   return string + '}';
@@ -61,7 +70,7 @@ function relationshipPattern(opts) {
       if (typeof opts.data === 'string')
         pattern += '{' + opts.data + '}';
       else
-        pattern += escapeLiteralMap(opts.data);
+        pattern += escapeLiteralMap(opts.data, opts.paramKeys);
     }
 
     pattern += ']';

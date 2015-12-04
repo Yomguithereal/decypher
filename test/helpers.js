@@ -22,8 +22,12 @@ describe('Helpers', function() {
 
     it('should properly escape literal maps.', function() {
 
-      assert.deepEqual(helpers.escapeLiteralMap({hello: 'world', number: 2}), '{hello: "world", number: 2}');
-      assert.deepEqual(helpers.escapeLiteralMap({'problematic key': 'bad'}), '{`problematic key`: "bad"}');
+      assert.strictEqual(helpers.escapeLiteralMap({hello: 'world', number: 2}), '{hello: "world", number: 2}');
+      assert.strictEqual(helpers.escapeLiteralMap({'problematic key': 'bad'}), '{`problematic key`: "bad"}');
+    });
+
+    it('should be possible to indicate parameter keys.', function() {
+      assert.strictEqual(helpers.escapeLiteralMap({name: 'name'}, ['name']), '{name: {name}}');
     });
   });
 
@@ -42,7 +46,8 @@ describe('Helpers', function() {
         '-[`r 1`:`COMPLEX PREDICATE`]-',
         '-[r:PREDICATE {param}]->',
         '-[{name: "John"}]-',
-        '<-[r:PREDICATE {number: 1, name: "John"}]-'
+        '<-[r:PREDICATE {number: 1, name: "John"}]-',
+        '-[r {name: {name}}]->'
       ];
 
       var descriptors = [
@@ -57,7 +62,8 @@ describe('Helpers', function() {
         {identifier: 'r 1', predicate: 'COMPLEX PREDICATE'},
         {direction: 'out', 'identifier': 'r', predicate: 'PREDICATE', data: 'param'},
         {data: {name: 'John'}},
-        {direction: 'in', identifier: 'r', predicate: 'PREDICATE', data: {number: 1, name: 'John'}}
+        {direction: 'in', identifier: 'r', predicate: 'PREDICATE', data: {number: 1, name: 'John'}},
+        {direction: 'out', identifier: 'r', data: {name: 'name'}, paramKeys: ['name']}
       ];
 
       patterns.forEach(function(pattern, i) {

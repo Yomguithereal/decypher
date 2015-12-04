@@ -173,6 +173,13 @@ helpers.escapeLiteralMap({
   'complex key': 3
 });
 >>> '{hello: "world", `complex key`: 3}'
+
+// Indicating parameter keys
+helpers.escapeLiteralMap({
+  name: 'name',
+  number: 2
+}, ['name']);
+>>> '{name: {name}, number: 2}'
 ```
 
 *Building relationship patterns*
@@ -184,6 +191,10 @@ var helpers = require('decypher').helpers;
 //   * `direction`: "in" or "out"
 //   * `identifier`
 //   * `predicate`
+//   * `data`:
+//       - if string, will produce a single parameter
+//       - if object, will stringify it
+//   * `paramKeys`: will be passed to escapeLiteralMap when stringifying data
 
 helpers.relationshipPattern();
 >>> '--'
@@ -194,6 +205,19 @@ helpers.relationshipPattern({
   predicate: 'KNOWS'
 });
 >>> '-[r:KNOWS]->'
+
+helpers.relationshipPattern({
+  direction: 'in',
+  identifier: 'r',
+  data: 'order'
+});
+>>> '<-[r {order}]-'
+
+helpers.relationshipPattern({
+  predicate: 'KNOWS',
+  data: {since: 1975}
+});
+>>> '-[:KNOWS {since: 1975}]-'
 ```
 
 ## Contribution
