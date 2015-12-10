@@ -137,4 +137,68 @@ describe('Query', function() {
     assert.deepEqual(query.statements(), expected);
     assert.strictEqual(query.compile(), expected.join('\n') + ';');
   });
+
+  it('should be possible to use segments.', function() {
+    var query = new Query(),
+        start = query.segment(),
+        end = query.segment();
+
+    end.where('a.name IN {names}', {names: ['Jack', 'John']});
+
+    query.orderBy('a.name');
+
+    end.return('a');
+
+    start.match('(a:Actor)');
+
+    var expected = [
+      'MATCH (a:Actor)',
+      'WHERE a.name IN {names}',
+      'RETURN a',
+      'ORDER BY a.name'
+    ];
+
+    assert.deepEqual(query.build(), {
+      statements: expected,
+      query: expected.join('\n') + ';',
+      params: {names: ['Jack', 'John']}
+    });
+  });
+
+  it('should be possible to use nested segments.', function() {
+    var query = new Query(),
+        one = query.segment();
+
+    query.orderBy('a.name');
+
+    one.match('(a:Actor)');
+
+    var two = one.segment();
+    two.return('a');
+
+    var expected = [
+      'MATCH (a:Actor)',
+      'RETURN a',
+      'ORDER BY a.name'
+    ];
+
+    assert.deepEqual(query.statements(), expected);
+  });
+
+  it('upper params should override sub params.', function() {
+    var query = new Query(),
+        one = query.segment(),
+        two = one.segment();
+
+    query.params({upper: true, zero: 0});
+    one.params({upper: false, one: 1});
+    two.params({upper: false, two: 2});
+
+    assert.deepEqual(query.params(), {
+      upper: true,
+      zero: 0,
+      one: 1,
+      two: 2
+    });
+  });
 });

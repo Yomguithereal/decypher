@@ -119,9 +119,9 @@ var cypher = new Query()
 cypher.compile();
 // or
 cypher.toString();
-// MATCH (n:Node)
-// WHERE n.title = {title}
-// RETURN n;
+>>> 'MATCH (n:Node)
+     WHERE n.title = {title}
+     RETURN n;'
 
 // Retrieving the query's parameters
 cypher.params();
@@ -152,9 +152,21 @@ cypher.params({whatever: 'is needed'});
 cypher.create(['(a:Actor)', '(m:Movie)']);
 >>> 'CREATE (a:Actor), (m:Movie)'
 
-// Finally, you can add arbitrary parts to the query if required
+// You can also add arbitrary parts to the query if required
 cypher.add('anything you want');
 cypher.add('with {param}', {param: 'heart'});
+
+// Finally, you can segment your query for convenience
+var cypher = new Query(),
+    start = cypher.segment(),
+    end = cypher.segment();
+
+end.return('a');
+start.match('(a:Actor)');
+
+cypher.compile();
+>>> 'MATCH (a:Actor)
+     RETURN a;'
 ```
 
 ## Helpers

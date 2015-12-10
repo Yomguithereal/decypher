@@ -22,25 +22,44 @@ function capitalize(string) {
 function Query() {
 
   // Properties
-  this._statements = [];
+  this._segments = [];
   this._params = {};
 }
 
+// Appending a segment to the query
+Query.prototype.segment = function() {
+  var query = new Query();
+
+  this._segments.push(query);
+  return query;
+};
+
 // Retrieving statements
 Query.prototype.statements = function() {
-  return this._statements.slice(0);
+  return this._segments.reduce(function(acc, segment) {
+    return acc.concat(segment instanceof Query ? segment.statements() : segment);
+  }, []);
 };
 
 // Compiling the query
 Query.prototype.compile = function() {
-  return this._statements.join('\n') + ';';
+  return this.statements().join('\n') + ';';
 };
 Query.prototype.toString = Query.prototype.compile;
 
 // Retrieving the query's parameters
 Query.prototype.params = function(params) {
-  if (!params)
-    return this._params;
+  if (!params) {
+    var additionalParams = this._segments
+      .filter(function(segment) {
+        return segment instanceof Query;
+      })
+      .map(function(segment) {
+        return segment.params();
+      });
+
+    return assign.apply(null, additionalParams.concat(this._params));
+  }
 
   if (!isPlainObject(params))
     throw Error('decypher.Query.params: passed parameters should be a plain object.');
@@ -88,9 +107,10 @@ STATEMENTS.concat(['']).forEach(function(statement) {
 
     string += parts.join(', ');
 
-    this._statements.push(string);
+    this._segments.push(string);
 
-    assign(this._params, params);
+    if (params)
+      this.params(params);
 
     return this;
   };
