@@ -119,9 +119,9 @@ var cypher = new Query()
 cypher.compile();
 // or
 cypher.toString();
->>> 'MATCH (n:Node)
+>>> `MATCH (n:Node)
      WHERE n.title = {title}
-     RETURN n;'
+     RETURN n;`
 
 // Retrieving the query's parameters
 cypher.params();
@@ -140,8 +140,7 @@ cypher.statements();
 // Retrieving all of the above at once
 var {query, params, statements} = cypher.build();
 
-// Note that multi words statements like `ORDER BY`
-// have to be written in camel-case:
+// Note that multi words statements like `ORDER BY` have to be written in camel-case:
 cypher.orderBy('n.title');
 
 // You can also set a bunch of params at once
@@ -165,8 +164,8 @@ end.return('a');
 start.match('(a:Actor)');
 
 cypher.compile();
->>> 'MATCH (a:Actor)
-     RETURN a;'
+>>> `MATCH (a:Actor)
+     RETURN a;`
 ```
 
 ## Helpers
