@@ -106,6 +106,8 @@ decypher('./path-to-queries-folder', 'cql');
 
 Note that this query builder is widely inspired by the [query-builder](https://github.com/shesek/cypher-query) package by [@shesek](https://github.com/shesek) but fixed and updated to support cypher's latest evolutions.
 
+The result object of the builder is also made to match @thingdom's [node-neo4j](https://github.com/thingdom/node-neo4j/tree/v2#readme) specifications for the `db.cypher` method.
+
 ```js
 var Query = require('decypher').Query;
 
