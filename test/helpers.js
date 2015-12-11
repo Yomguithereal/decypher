@@ -41,7 +41,8 @@ describe('Helpers', function() {
         '(:Label)',
         '({name: "John"})',
         '(n {name: {name}})',
-        '(:Label {params})'
+        '(:Label {params})',
+        '(n)'
       ];
 
       var descriptors = [
@@ -51,7 +52,8 @@ describe('Helpers', function() {
         {label: 'Label'},
         {data: {name: 'John'}},
         {identifier: 'n', data: {name: 'name'}, paramKeys: ['name']},
-        {label: 'Label', data: 'params'}
+        {label: 'Label', data: 'params'},
+        'n'
       ];
 
       patterns.forEach(function(pattern, i) {
@@ -77,7 +79,9 @@ describe('Helpers', function() {
         '-[{name: "John"}]-',
         '<-[r:PREDICATE {number: 1, name: "John"}]-',
         '-[r {name: {name}}]->',
-        '-[r:ONE|:TWO]->'
+        '-[r:ONE|:TWO]->',
+        '-[r]-',
+        '(a)-[:PLAYED_IN]->(m:Movie)'
       ];
 
       var descriptors = [
@@ -94,7 +98,9 @@ describe('Helpers', function() {
         {data: {name: 'John'}},
         {direction: 'in', identifier: 'r', predicate: 'PREDICATE', data: {number: 1, name: 'John'}},
         {direction: 'out', identifier: 'r', data: {name: 'name'}, paramKeys: ['name']},
-        {direction: 'out', identifier: 'r', predicate: ['ONE', 'TWO']}
+        {direction: 'out', identifier: 'r', predicate: ['ONE', 'TWO']},
+        'r',
+        {source: 'a', direction: 'out', predicate: 'PLAYED_IN', target: {identifier: 'm', label: 'Movie'}}
       ];
 
       patterns.forEach(function(pattern, i) {

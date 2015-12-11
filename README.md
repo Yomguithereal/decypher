@@ -216,6 +216,9 @@ var helpers = require('decypher').helpers;
 helpers.nodePattern();
 >>> '()'
 
+helpers.nodePattern('n');
+>>> '(n)'
+
 helpers.nodePattern({
   identifier: 'n',
   label: 'Node'
@@ -256,9 +259,14 @@ var helpers = require('decypher').helpers;
 //       - if string, will produce a single parameter
 //       - if object, will stringify it
 //   * `paramKeys`: will be passed to escapeLiteralMap when stringifying data
+//   * `source`: the source node (passed to the `nodePattern` function)
+//   * `target`: the target node (passed to the `nodePattern` function)
 
 helpers.relationshipPattern();
 >>> '--'
+
+helpers.relationshipPattern('r');
+>>> '-[r]-'
 
 helpers.relationshipPattern({
   direction: 'out',
@@ -285,6 +293,17 @@ helpers.relationshipPattern({
   data: {since: 1975}
 });
 >>> '-[:KNOWS {since: 1975}]-'
+
+helpers.relationshipPattern({
+  direction: 'out',
+  predicate: 'PLAYED_IN',
+  source: 'a',
+  target: {
+    identifier: 'm',
+    label: 'Movie'
+  }
+});
+>>> '(a)-[:PLAYED_IN]->(m:Movie)'
 ```
 
 ## Contribution

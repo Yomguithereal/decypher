@@ -44,6 +44,9 @@ function escapeLiteralMap(object, paramKeys) {
 function nodePattern(opts) {
   opts = opts || {};
 
+  if (typeof opts === 'string')
+    return nodePattern({identifier: opts});
+
   if (!isPlainObject(opts))
     throw Error('decypher.helpers.nodePattern: given options should be a plain object.');
 
@@ -72,10 +75,16 @@ function nodePattern(opts) {
 function relationshipPattern(opts) {
   opts = opts || {};
 
+  if (typeof opts === 'string')
+    return relationshipPattern({identifier: opts});
+
   if (!isPlainObject(opts))
     throw Error('decypher.helpers.relationshipPattern: given options should be a plain object.');
 
   var pattern = '';
+
+  if (opts.source)
+    pattern += nodePattern(opts.source);
 
   if (opts.direction === 'in')
     pattern += '<-';
@@ -110,6 +119,9 @@ function relationshipPattern(opts) {
     pattern += '->';
   else
     pattern += '-';
+
+  if (opts.target)
+    pattern += nodePattern(opts.target);
 
   return pattern;
 }

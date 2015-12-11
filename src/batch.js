@@ -215,17 +215,14 @@ Batch.prototype.query = function() {
 
   //-- Unlinks
   this.unlinks.forEach(function(unlink, i) {
-    var pattern = relationshipPattern({
-      direction: 'out',
-      identifier: 'r' + i,
-      predicate: unlink.predicate
-    });
-
-    var fromNode = nodePattern({identifier: 'n' + unlink.from}),
-        toNode = nodePattern({identifier: 'n' + unlink.to});
-
     matchSegment
-      .match(fromNode + pattern + toNode);
+      .match(relationshipPattern({
+        direction: 'out',
+        identifier: 'r' + i,
+        predicate: unlink.predicate,
+        source: 'n' + unlink.from,
+        target: 'n' + unlink.to
+      }));
 
     query.delete('r' + i);
   });
@@ -234,17 +231,14 @@ Batch.prototype.query = function() {
   this.edges.forEach(function(edge, i) {
     var propName = 'rp' + i;
 
-    var pattern = relationshipPattern({
-      direction: 'out',
-      predicate: edge.predicate,
-      data: edge.data ? propName : null
-    });
-
-    var fromNode = nodePattern({identifier: 'n' + edge.from}),
-        toNode = nodePattern({identifier: 'n' + edge.to});
-
     createSegment
-      .create(fromNode + pattern + toNode);
+      .create(relationshipPattern({
+        direction: 'out',
+        predicate: edge.predicate,
+        data: edge.data ? propName : null,
+        source: 'n' + edge.from,
+        target: 'n' + edge.to
+      }));
 
     if (edge.data)
       query.params(buildObject(propName, edge.data));
