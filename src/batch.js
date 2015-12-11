@@ -13,15 +13,13 @@ var escapeIdentifier = helpers.escapeIdentifier,
     nodePattern = helpers.nodePattern,
     relationshipPattern = helpers.relationshipPattern;
 
-// TODO: RETURN rather object for nodes?
+/////
+/// TODO: more readable identifiers
+/////
 
 /**
  * Helpers.
  */
-function isInternal(id) {
-  return /^i/.test('' + id);
-}
-
 function buildObject(key, value) {
   if (!key)
     return null;
@@ -31,13 +29,51 @@ function buildObject(key, value) {
   return o;
 }
 
+function validData(o) {
+  return o && !!Object.keys(o).length;
+}
+
 /**
- * Class.
+ * Handler classes.
+ */
+function Node(batch, id, data, labels) {
+
+  var external = id || id === 0;
+
+  // Properties
+  this.batch = batch;
+  this.id = id || null;
+  this.identifier = 'n' + (!external ? 'i' + (batch.nodesCounter++) : 'e' + id);
+  this.param = 'np' + this.identifier;
+  this.data = data || null;
+  this.labels = labels;
+  this.external = external;
+}
+
+function Edge(batch, id, source, predicate, target, data) {
+
+  var external = id || id === 0;
+
+  // Properties
+  this.batch = batch;
+  this.id = id || null;
+  this.identifier = 'r' + (!external ? 'i' + (batch.edgesCounter++) : 'e' + id);
+  this.param = 'rp' + this.identifier;
+  this.source = source;
+  this.target = target;
+  this.predicate = predicate;
+  this.data = data || null;
+  this.external = external;
+}
+
+/**
+ * Main class.
  */
 function Batch() {
 
   // Counters & indexes
   this.nodesCounter = 0;
+  this.edgesCounter = 0;
   this.nodes = {};
   this.externalNodes = {};
   this.edges = [];
@@ -47,16 +83,14 @@ function Batch() {
 /**
  * Private prototype.
  */
-Batch.prototype._externalNode = function(id, data) {
-  var identifier = 'e' + id;
+Batch.prototype._externalNode = function(id) {
+  if (typeof id !== 'string' && typeof id !== 'number')
+    throw Error('decypher.Batch: invalid node. Should be either a node handler or a raw Neo4j id.');
 
-  if (!this.externalNodes[identifier])
-    this.externalNodes[identifier] = {id: identifier};
+  if (!this.externalNodes[id])
+    this.externalNodes[id] = new Node(this, id, {});
 
-  if (data)
-    this.externalNodes[identifier].data = data;
-
-  return this.externalNodes[identifier];
+  return this.externalNodes[id];
 };
 
 /**
@@ -74,31 +108,23 @@ Batch.prototype.create = function(data, labels) {
   labels = [].concat(labels);
 
   // Giving an id to the created node
-  var id = 'i' + (this.nodesCounter++);
+  var node = new Node(this, null, data, labels);
+  this.nodes[node.identifier] = node;
 
-  this.nodes[id] = {data: data, labels: labels};
-
-  return id;
+  return node;
 }
 
 // Updating a node
-Batch.prototype.update = function(id, data) {
+Batch.prototype.update = function(node, data) {
   if (!isPlainObject(data))
     throw Error('decypher.Batch.update: provided data is not an object.');
 
-  if (isInternal(id)) {
-    var node = this.nodes[id];
+  if (!(node instanceof Node))
+    node = this._externalNode(node);
 
-    if (!node)
-      throw Error('decypher.Batch.update: the given internal node id is not defined.');
+  node.data = assign({}, node.data, data);
 
-    node.data = assign({}, node.data, data);
-  }
-  else {
-    this._externalNode(id, data);
-  }
-
-  return this;
+  return node;
 };
 
 // Setting a property
@@ -112,65 +138,34 @@ Batch.prototype.remove = function(id, key) {
 };
 
 // Relate two nodes
-Batch.prototype.relate = function(a, predicate, b, data) {
+Batch.prototype.relate = function(source, predicate, target, data) {
   data = data || null;
 
-  if (!isInternal(a)) {
-    var node = this._externalNode(a);
-    a = node.id;
-  }
-  else {
-    var node = this.nodes[a];
+  if (!(source instanceof Node))
+    source = this._externalNode(source);
 
-    if (!node)
-      throw Error('decypher.Batch.relate: the given internal node id for the source is not defined.');
-  }
+  if (!(target instanceof Node))
+    target = this._externalNode(target);
 
-  if (!isInternal(b)) {
-    var node = this._externalNode(b);
-    b = node.id;
-  }
-  else {
-    var node = this.nodes[b];
+  var edge = new Edge(this, null, source, predicate, target, data);
 
-    if (!node)
-      throw Error('decypher.Batch.relate: the given internal node id for the target is not defined.');
-  }
+  this.edges.push(edge);
 
-  this.edges.push({from: a, to: b, predicate: predicate, data: data});
-
-  // TODO: Return the edge id?
-  return this;
+  return edge;
 };
 
 // Unrelate two nodes
 // TODO: how to delete a relation strictly
-Batch.prototype.unrelate = function(a, predicate, b) {
+Batch.prototype.unrelate = function(source, predicate, target) {
 
-  if (!isInternal(a)) {
-    var node = this._externalNode(a);
-    a = node.id;
-  }
-  else {
-    var node = this.nodes[a];
+  if (!(source instanceof Node))
+    source = this._externalNode(source);
 
-    if (!node)
-      throw Error('decypher.Batch.unrelate: the given internal node id for the source is not defined.');
-  }
+  if (!(target instanceof Node))
+    target = this._externalNode(target);
 
-  if (!isInternal(b)) {
-    var node = this._externalNode(b);
-    b = node.id;
-  }
-  else {
-    var node = this.nodes[b];
-
-    if (!node)
-      throw Error('decypher.Batch.unrelate: the given internal node id for the target is not defined.');
-  }
-
-  this.unlinks.push({from: a, to: b, predicate: predicate});
-  return this;
+  this.unlinks.push({source: source, target: target, predicate: predicate});
+  return;
 };
 
 Batch.prototype.delete = function() {
@@ -185,29 +180,25 @@ Batch.prototype.query = function() {
 
   //-- Registering external nodes
   Object.keys(this.externalNodes).forEach(function(k) {
-    var node = this.externalNodes[k],
-        identifier = 'n' + k,
-        propName = 'np' + k;
+    var node = this.externalNodes[k];
 
     matchSegment
-      .match(nodePattern({identifier: identifier}))
-      .where('id(' + identifier + ') = ' + node.id);
+      .match(nodePattern({identifier: node.identifier}))
+      .where('id(' + node.identifier + ') = ' + node.id);
 
-    if (node.data)
-      query.set(identifier + ' += {' + propName + '}', buildObject(propName, node.data));
+    if (validData(node.data))
+      query.set(node.identifier + ' += {' + node.param + '}', buildObject(node.param, node.data));
   }, this);
 
   //-- Internal nodes
   Object.keys(this.nodes).forEach(function(k) {
-    var node = this.nodes[k],
-        identifier = 'n' + k,
-        propName = 'np' + k;
+    var node = this.nodes[k];
 
     createSegment
-      .create(nodePattern({identifier: identifier, data: propName}), buildObject(propName, node.data));
+      .create(nodePattern({identifier: node.identifier, data: node.param}), buildObject(node.param, node.data));
 
     var labels = node.labels.map(function(label) {
-      return identifier + ':' + escapeIdentifier(label);
+      return node.identifier + ':' + escapeIdentifier(label);
     });
 
     query.set(labels);
@@ -218,30 +209,28 @@ Batch.prototype.query = function() {
     matchSegment
       .match(relationshipPattern({
         direction: 'out',
-        identifier: 'r' + i,
+        identifier: 'u' + i,
         predicate: unlink.predicate,
-        source: 'n' + unlink.from,
-        target: 'n' + unlink.to
+        source: unlink.source.identifier,
+        target: unlink.target.identifier
       }));
 
-    query.delete('r' + i);
+    query.delete('u' + i);
   });
 
   //-- Edges
   this.edges.forEach(function(edge, i) {
-    var propName = 'rp' + i;
-
     createSegment
       .create(relationshipPattern({
         direction: 'out',
         predicate: edge.predicate,
-        data: edge.data ? propName : null,
-        source: 'n' + edge.from,
-        target: 'n' + edge.to
+        data: edge.data ? edge.param : null,
+        source: edge.source.identifier,
+        target: edge.target.identifier
       }));
 
-    if (edge.data)
-      query.params(buildObject(propName, edge.data));
+    if (validData(edge.data))
+      query.params(buildObject(edge.param, edge.data));
   });
 
   return query;

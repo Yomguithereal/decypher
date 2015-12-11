@@ -28,32 +28,32 @@ describe('Batch', function() {
       query.statements(),
       [
         'MATCH (ne45)',
-        'WHERE id(ne45) = e45',
+        'WHERE id(ne45) = 45',
         'MATCH (ne46)',
-        'WHERE id(ne46) = e46',
-        'MATCH (ne45)-[r0:AGGREGATES]->(ne46)',
-        'CREATE (ni0 {npi0})',
-        'CREATE (ni1 {npi1})',
-        'CREATE (ni2 {npi2})',
+        'WHERE id(ne46) = 46',
+        'MATCH (ne45)-[u0:AGGREGATES]->(ne46)',
+        'CREATE (ni0 {npni0})',
+        'CREATE (ni1 {npni1})',
+        'CREATE (ni2 {npni2})',
         'CREATE (ni0)-[:AGGREGATES]->(ni1)',
         'CREATE (ni0)-[:AGGREGATES]->(ni2)',
-        'CREATE (ne45)-[:AGGREGATES {rp2}]->(ni2)',
-        'SET ne45 += {npe45}',
+        'CREATE (ne45)-[:AGGREGATES {rpri2}]->(ni2)',
+        'SET ne45 += {npne45}',
         'SET ni0:ClassifiedItem, ni0:ClassifiedProduct',
         'SET ni1:Item',
         'SET ni2:Item',
-        'DELETE r0'
+        'DELETE u0'
       ]
     );
 
     assert.deepEqual(
       query.params(),
       {
-        npe45: {note: 'Here you go.'},
-        npi0: {name: 'Dairy products'},
-        npi1: {name: 'Milk'},
-        npi2: {name: 'Cheese'},
-        rp2: {precision: 3}
+        npne45: {note: 'Here you go.'},
+        npni0: {name: 'Dairy products'},
+        npni1: {name: 'Milk'},
+        npni2: {name: 'Cheese'},
+        rpri2: {precision: 3}
       }
     );
   });
