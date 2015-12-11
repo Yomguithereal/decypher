@@ -10,6 +10,7 @@ var isPlainObject = require('lodash.isplainobject'),
     helpers = require('./helpers.js');
 
 var escapeIdentifier = helpers.escapeIdentifier,
+    nodePattern = helpers.nodePattern,
     relationshipPattern = helpers.relationshipPattern;
 
 // TODO: RETURN rather object for nodes?
@@ -143,6 +144,7 @@ Batch.prototype.relate = function(a, predicate, b, data) {
 };
 
 // Unrelate two nodes
+// TODO: how to delete a relation strictly
 Batch.prototype.unrelate = function(a, predicate, b) {
 
   if (!isInternal(a)) {
@@ -176,98 +178,76 @@ Batch.prototype.delete = function() {
 };
 
 Batch.prototype.query = function() {
-  var query = new Query();
+  var query = new Query(),
+      matchSegment = query.segment(),
+      createSegment = query.segment();
 
-  var matches = [],
-      lines = [];
 
-  //-- External nodes
+  //-- Registering external nodes
   Object.keys(this.externalNodes).forEach(function(k) {
     var node = this.externalNodes[k],
-        name = 'n' + k,
-        propName = 'p' + k;
+        identifier = 'n' + k,
+        propName = 'np' + k;
 
-    matches.push({name: name, id: node.id});
+    matchSegment
+      .match(nodePattern({identifier: identifier}))
+      .where('id(' + identifier + ') = ' + node.id);
 
     if (node.data)
-      lines.push({type: 'update', name: name, propName: propName, data: node.data});
+      query.set(identifier + ' += {' + propName + '}', buildObject(propName, node.data));
   }, this);
 
   //-- Internal nodes
   Object.keys(this.nodes).forEach(function(k) {
     var node = this.nodes[k],
-        name = 'n' + k,
-        propName = 'p' + k;
+        identifier = 'n' + k,
+        propName = 'np' + k;
 
-    lines.push({type: 'create', name: name, propName: propName, data: node.data});
+    createSegment
+      .create(nodePattern({identifier: identifier, data: propName}), buildObject(propName, node.data));
 
-    node.labels.forEach(function(label) {
-      lines.push({type: 'label', name: name, label: label});
+    var labels = node.labels.map(function(label) {
+      return identifier + ':' + escapeIdentifier(label);
     });
+
+    query.set(labels);
   }, this);
 
   //-- Unlinks
   this.unlinks.forEach(function(unlink, i) {
-    matches.push({
-      from: unlink.from,
-      predicate: unlink.predicate,
-      to: unlink.to,
-      index: i
+    var pattern = relationshipPattern({
+      direction: 'out',
+      identifier: 'r' + i,
+      predicate: unlink.predicate
     });
 
-    lines.push({type: 'unrelate', index: i});
+    var fromNode = nodePattern({identifier: 'n' + unlink.from}),
+        toNode = nodePattern({identifier: 'n' + unlink.to});
+
+    matchSegment
+      .match(fromNode + pattern + toNode);
+
+    query.delete('r' + i);
   });
 
   //-- Edges
-  this.edges.forEach(function(edge) {
-    lines.push({
-      type: 'relate',
-      from: edge.from,
-      to: edge.to,
-      predicate: edge.predicate
+  this.edges.forEach(function(edge, i) {
+    var propName = 'rp' + i;
+
+    var pattern = relationshipPattern({
+      direction: 'out',
+      predicate: edge.predicate,
+      data: edge.data ? propName : null
     });
-  });
 
-  //-- Building the query
-  matches.forEach(function(match) {
-    if (match.from) {
-      var pattern = relationshipPattern({
-        direction: 'out',
-        identifier: 'r' + match.index,
-        predicate: match.predicate
-      });
+    var fromNode = nodePattern({identifier: 'n' + edge.from}),
+        toNode = nodePattern({identifier: 'n' + edge.to});
 
-      query.match('(n' + match.from + ')' + pattern + '(n' + match.to + ')');
-    }
-    else {
-      query.match('(' + match.name + ')');
-      query.where('id(' + match.name + ') = ' + match.id);
-    }
-  });
+    createSegment
+      .create(fromNode + pattern + toNode);
 
-  lines.forEach(function(line) {
-    var p = buildObject(line.propName, line.data);
-
-    if (line.type === 'update') {
-      query.set(line.name + ' += {' + line.propName + '}', p);
-    }
-    else if (line.type === 'create') {
-      query.create('(' + line.name + ' {' + line.propName + '})', p);
-    }
-    else if (line.type === 'label') {
-      query.set(line.name + ':`' + escapeIdentifier(line.label) + '`');
-    }
-    else if (line.type === 'relate') {
-      var pattern = relationshipPattern({
-        direction: 'out',
-        predicate: line.predicate
-      });
-
-      query.create('(n' + line.from + ')' + pattern + '(n' + line.to + ')');
-    }
-    else if (line.type === 'unrelate') {
-      query.delete('r' + line.index);
-    }
+    if (edge.data)
+      query.params(buildObject(propName, edge.data));
   });
 
   return query;

@@ -17,7 +17,7 @@ describe('Batch', function() {
 
     batch.relate(dairy, 'AGGREGATES', milk);
     batch.relate(dairy, 'AGGREGATES', cheese);
-    batch.relate(45, 'AGGREGATES', cheese);
+    batch.relate(45, 'AGGREGATES', cheese, {precision: 3});
 
     batch.update(45, {note: 'Here you go.'});
     batch.unrelate(45, 'AGGREGATES', 46);
@@ -27,34 +27,33 @@ describe('Batch', function() {
     assert.deepEqual(
       query.statements(),
       [
-
         'MATCH (ne45)',
         'WHERE id(ne45) = e45',
         'MATCH (ne46)',
         'WHERE id(ne46) = e46',
         'MATCH (ne45)-[r0:AGGREGATES]->(ne46)',
-        'SET ne45 += {pe45}',
-        'CREATE (ni0 {pi0})',
-        'SET ni0:`ClassifiedItem`',
-        'SET ni0:`ClassifiedProduct`',
-        'CREATE (ni1 {pi1})',
-        'SET ni1:`Item`',
-        'CREATE (ni2 {pi2})',
-        'SET ni2:`Item`',
-        'DELETE r0',
+        'CREATE (ni0 {npi0})',
+        'CREATE (ni1 {npi1})',
+        'CREATE (ni2 {npi2})',
         'CREATE (ni0)-[:AGGREGATES]->(ni1)',
         'CREATE (ni0)-[:AGGREGATES]->(ni2)',
-        'CREATE (ne45)-[:AGGREGATES]->(ni2)'
+        'CREATE (ne45)-[:AGGREGATES {rp2}]->(ni2)',
+        'SET ne45 += {npe45}',
+        'SET ni0:ClassifiedItem, ni0:ClassifiedProduct',
+        'SET ni1:Item',
+        'SET ni2:Item',
+        'DELETE r0'
       ]
     );
 
     assert.deepEqual(
       query.params(),
       {
-        pe45: {note: 'Here you go.'},
-        pi0: {name: 'Dairy products'},
-        pi1: {name: 'Milk'},
-        pi2: {name: 'Cheese'}
+        npe45: {note: 'Here you go.'},
+        npi0: {name: 'Dairy products'},
+        npi1: {name: 'Milk'},
+        npi2: {name: 'Cheese'},
+        rp2: {precision: 3}
       }
     );
   });
