@@ -5,6 +5,21 @@
  * Compiling some information about Cypher's syntax such as statements and
  * reserved words.
  */
+var flags = [
+  'i',
+  'x',
+  'm',
+  's',
+  'u',
+  'd'
+];
+
+var REGEX_FLAGS = {};
+
+flags.forEach(function(flag) {
+  REGEX_FLAGS[flag] = true;
+});
+
 var STATEMENTS = [
   'ASSERT',
   'CASE',
@@ -46,7 +61,7 @@ var additionalKeywords = [
   'AND',
   'AS',
   'ASC',
-  'CONTAINS'
+  'CONTAINS',
   'DESC',
   'ENDS',
   'FALSE',
@@ -64,5 +79,6 @@ STATEMENTS.concat(additionalKeywords).forEach(function(statement) {
   });
 });
 
+exports.REGEX_FLAGS = REGEX_FLAGS;
 exports.STATEMENTS = STATEMENTS;
 exports.KEYWORDS = KEYWORDS;

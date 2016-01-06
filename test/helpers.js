@@ -117,6 +117,12 @@ describe('Helpers', function() {
       }, /query/);
     });
 
+    it('should throw if the passed flags are invalid.', function() {
+      assert.throws(function() {
+        helpers.searchPattern('john', {flags: 'bmx'});
+      }, /invalid flags/);
+    });
+
     it('should properly build relationship patterns.', function() {
       var patterns = [
         '(?ius).*john.*',

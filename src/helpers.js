@@ -5,9 +5,11 @@
  * Miscellaneous helper functions.
  */
 var isPlainObject = require('lodash.isplainobject'),
-    escapeRegexp = require('escape-regexp');
+    escapeRegexp = require('escape-regexp'),
+    syntax = require('./syntax.js');
 
-var KEYWORDS = require('./syntax.js').KEYWORDS;
+var KEYWORDS = syntax.KEYWORDS,
+    REGEX_FLAGS = syntax.REGEX_FLAGS;
 
 // Escaping an identifier
 function escapeIdentifier(identifier) {
@@ -136,6 +138,13 @@ function searchPattern(query, opts) {
 
   var flags = 'flags' in opts ? opts.flags : 'ius',
       partial = opts.partial !== false;
+
+  if (typeof flags === 'string') {
+    if (flags.split('').some(function(flag) {
+      return !REGEX_FLAGS[flag];
+    }))
+      throw Error('decypher.helpers.searchPattern: invalid flags "' + flags + '".');
+  }
 
   var pattern = '';
 
