@@ -46,6 +46,7 @@ var additionalKeywords = [
   'AND',
   'AS',
   'ASC',
+  'CONTAINS'
   'DESC',
   'ENDS',
   'FALSE',
