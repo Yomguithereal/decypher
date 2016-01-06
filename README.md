@@ -9,6 +9,11 @@ It includes the following:
 * A [Yesql](https://github.com/krisajenkins/yesql)-like [query loader](#query-loader).
 * A simple [query builder](#query-builder).
 * Miscellaneous [helpers](#helpers).
+  * [escapeIdentifier](#identifier)
+  * [escapeLiteralMap](#literal-map)
+  * [nodePattern](#node-pattern)
+  * [relationshipPattern](#relationship-pattern)
+  * [searchPattern](#search-pattern)
 
 ## Installation
 
@@ -172,7 +177,7 @@ cypher.compile();
 
 ## Helpers
 
-*Escaping identifiers*
+<em id="identifier">Escaping identifiers</em>
 
 ```js
 var helpers = require('decypher').helpers;
@@ -181,7 +186,7 @@ helpers.escapeIdentifier('Complex `Identifier`');
 >>> '`Complex ``Identifier```'
 ```
 
-*Escaping literal maps*
+<em id="literal-map">Escaping literal maps</em>
 
 ```js
 var helpers = require('decypher').helpers;
@@ -200,7 +205,7 @@ helpers.escapeLiteralMap({
 >>> '{name: {name}, number: 2}'
 ```
 
-*Building node patterns*
+<em id="node-pattern">Building node patterns</em>
 
 ```js
 var helpers = require('decypher').helpers;
@@ -246,7 +251,7 @@ helpers.nodePattern({
 ```
 
 
-*Building relationship patterns*
+<em id="relationship-pattern">Building relationship patterns</em>
 
 ```js
 var helpers = require('decypher').helpers;
@@ -306,7 +311,7 @@ helpers.relationshipPattern({
 >>> '(a)-[:PLAYED_IN]->(m:Movie)'
 ```
 
-*Building search patterns*
+<em id="search-pattern">Building search patterns</em>
 
 Note that it will escape for query for regular expression use through the [`escape-regexp`](https://www.npmjs.com/package/escape-regexp) module.
 
