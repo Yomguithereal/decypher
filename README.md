@@ -306,6 +306,27 @@ helpers.relationshipPattern({
 >>> '(a)-[:PLAYED_IN]->(m:Movie)'
 ```
 
+*Building search patterns*
+
+Note that it will escape for query for regular expression use through the [`escape-regexp`](https://www.npmjs.com/package/escape-regexp) module.
+
+```js
+var helpers = require('decypher').helpers;
+
+// Possible options are:
+//   * `flags` [`'ius'`]: Flags for the regular expression.
+//   * `partial` [`true`]: Should the match be partial (wrapped in `.*query.*`)?
+
+helpers.searchPattern('john');
+>>> '(?ius).*john.*'
+
+helpers.searchPattern('john', {flags: 'im'});
+>>> '(?im).*john.*'
+
+helpers.searchPattern('john', {flags: null, partial: false});
+>>> 'john'
+```
+
 ## Contribution
 
 Contributions are of course more than welcome. Be sure to add and pass any relevant unit tests before submitting any code.

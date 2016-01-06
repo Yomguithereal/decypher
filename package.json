@@ -28,6 +28,7 @@
     "mocha": "^2.1.0"
   },
   "dependencies": {
+    "escape-regexp": "0.0.1",
     "lodash.assign": "^3.2.0",
     "lodash.isplainobject": "^3.2.0"
   }

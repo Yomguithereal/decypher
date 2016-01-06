@@ -4,7 +4,8 @@
  *
  * Miscellaneous helper functions.
  */
-var isPlainObject = require('lodash.isplainobject');
+var isPlainObject = require('lodash.isplainobject'),
+    escapeRegexp = require('escape-regexp');
 
 var KEYWORDS = require('./syntax.js').KEYWORDS;
 
@@ -126,9 +127,36 @@ function relationshipPattern(opts) {
   return pattern;
 }
 
+// Creating a search pattern
+function searchPattern(query, opts) {
+  opts = opts || {};
+
+  if (typeof query !== 'string')
+    throw Error('decypher.helpers.searchPattern: given query should be a string.');
+
+  var flags = 'flags' in opts ? opts.flags : 'ius',
+      partial = opts.partial !== false;
+
+  var pattern = '';
+
+  if (flags)
+    pattern += '(?' + flags + ')';
+
+  if (partial)
+    pattern += '.*';
+
+  pattern += escapeRegexp(query);
+
+  if (partial)
+    pattern += '.*';
+
+  return pattern;
+}
+
 module.exports = {
   escapeIdentifier: escapeIdentifier,
   escapeLiteralMap: escapeLiteralMap,
   nodePattern: nodePattern,
-  relationshipPattern: relationshipPattern
+  relationshipPattern: relationshipPattern,
+  searchPattern: searchPattern
 };

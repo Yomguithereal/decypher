@@ -108,4 +108,33 @@ describe('Helpers', function() {
       });
     });
   });
+
+  describe('Search pattern', function() {
+
+    it('should throw if the given query is not a string.', function() {
+      assert.throws(function() {
+        helpers.searchPattern({hello: 'world'});
+      }, /query/);
+    });
+
+    it('should properly build relationship patterns.', function() {
+      var patterns = [
+        '(?ius).*john.*',
+        '(?i).*john.*',
+        'john',
+        '(?u)john'
+      ];
+
+      var descriptors = [
+        {},
+        {flags: 'i'},
+        {flags: '', partial: false},
+        {flags: 'u', partial: false}
+      ];
+
+      patterns.forEach(function(pattern, i) {
+        assert.strictEqual(helpers.searchPattern('john', descriptors[i]), pattern, '"' + pattern + '"');
+      });
+    });
+  });
 });
