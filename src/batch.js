@@ -13,10 +13,6 @@ var escapeIdentifier = helpers.escapeIdentifier,
     nodePattern = helpers.nodePattern,
     relationshipPattern = helpers.relationshipPattern;
 
-/////
-/// TODO: more readable identifiers
-/////
-
 /**
  * Helpers.
  */
@@ -43,8 +39,8 @@ function Node(batch, id, data, labels) {
   // Properties
   this.batch = batch;
   this.id = id || null;
-  this.identifier = 'n' + (!external ? 'i' + (batch.nodesCounter++) : 'e' + id);
-  this.param = 'np' + this.identifier;
+  this.identifier = 'N' + (!external ? 'i' + (batch.nodesCounter++) : 'e' + id);
+  this.param = 'p' + this.identifier;
   this.data = data || null;
   this.labels = labels;
   this.external = external;
@@ -57,8 +53,8 @@ function Edge(batch, id, source, predicate, target, data) {
   // Properties
   this.batch = batch;
   this.id = id || null;
-  this.identifier = 'r' + (!external ? 'i' + (batch.edgesCounter++) : 'e' + id);
-  this.param = 'rp' + this.identifier;
+  this.identifier = 'R' + (!external ? 'i' + (batch.edgesCounter++) : 'e' + id);
+  this.param = 'p' + this.identifier;
   this.source = source;
   this.target = target;
   this.predicate = predicate;
@@ -209,13 +205,13 @@ Batch.prototype.query = function() {
     matchSegment
       .match(relationshipPattern({
         direction: 'out',
-        identifier: 'u' + i,
+        identifier: 'U' + i,
         predicate: unlink.predicate,
         source: unlink.source.identifier,
         target: unlink.target.identifier
       }));
 
-    query.delete('u' + i);
+    query.delete('U' + i);
   });
 
   //-- Edges
