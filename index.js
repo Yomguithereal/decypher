@@ -11,7 +11,7 @@ var loader = require('./src/loader.js'),
 
 // Version
 Object.defineProperty(loader, 'version', {
-  value: '0.4.0'
+  value: '0.5.0'
 });
 
 // Attaching the other classes to the loader
