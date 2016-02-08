@@ -14,7 +14,7 @@ exports.assign = function() {
     return {};
 
   for (i = 1, l = args.length; i < l; i++) {
-    for (k in args[i] || {})
+    for (k in args[i] || {})
       o[k] = args[i][k];
   }
 

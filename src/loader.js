@@ -12,19 +12,8 @@ var fs = require('fs'),
 /**
  * Helpers.
  */
-function parse(string) {
-  var blocks;
-
-  if (~string.search(/\/\/\s?name:/i))
-    blocks = string.split(/(?=\/\/\s+name:)/ig);
-  else
-    blocks = [string];
-
-  return blocks.map(parseBlock);
-}
-
 function parseBlock(block) {
-  var data = {body: ''};
+  var data = {body: ''};
 
   // Iterating through lines
   block.trim().split(/[\n\r]+/g).forEach(function(line) {
@@ -45,7 +34,18 @@ function parseBlock(block) {
   return data;
 }
 
-function resolve(string, path) {
+function parse(string) {
+  var blocks;
+
+  if (~string.search(/\/\/\s?name:/i))
+    blocks = string.split(/(?=\/\/\s+name:)/ig);
+  else
+    blocks = [string];
+
+  return blocks.map(parseBlock);
+}
+
+function resolve(string, pathname) {
   var blocks = parse(string);
 
   if (blocks.length <= 1 && !blocks[0].name) {
@@ -55,7 +55,7 @@ function resolve(string, path) {
     var o = {};
     blocks.forEach(function(b, i) {
       if (o[b.name])
-        throw Error('decypher: twice the name "' + b.name + '" in file "' + path + '".');
+        throw Error('decypher: twice the name "' + b.name + '" in file "' + pathname + '".');
 
       o[b.name || i] = b.body;
     });
@@ -68,16 +68,19 @@ function resolve(string, path) {
  * Main function.
  */
 function loader(spec, extension) {
+  var o = {};
+
   extension = (extension || 'cypher').replace(/^\./, '');
 
   if (typeof spec === 'string') {
 
     // Folder-behaviour
     if (fs.lstatSync(spec).isDirectory()) {
-      var r = new RegExp('(.*)\\.' + extension + '$'),
-          o = {};
+      var r = new RegExp('(.*)\\.' + extension + '$');
 
-      var items = fs.readdirSync(spec)
+      o = {};
+
+      fs.readdirSync(spec)
         .filter(function(filename) {
           return fs.lstatSync(path.join(spec, filename)).isFile() &&
                  ~filename.search(r);
@@ -94,7 +97,8 @@ function loader(spec, extension) {
     }
   }
   else if (isPlainObject(spec)) {
-    var o = {};
+    o = {};
+
     for (var k in spec) {
       o[k] = resolve(fs.readFileSync(spec[k], 'utf-8'), spec[k]);
     }

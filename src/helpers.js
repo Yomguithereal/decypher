@@ -76,7 +76,7 @@ function nodePattern(opts) {
 
 // Creating a relationship pattern
 function relationshipPattern(opts) {
-  opts = opts || {};
+  opts = opts || {};
 
   if (typeof opts === 'string')
     return relationshipPattern({identifier: opts});

@@ -35,25 +35,25 @@ function validData(o) {
  */
 function Node(batch, id, data, labels) {
 
-  var external = id || id === 0;
+  var external = id || id === 0;
 
   // Properties
   this.batch = batch;
   this.id = id || null;
   this.identifier = 'N' + (!external ? 'i' + (batch.nodesCounter++) : 'e' + id);
   this.param = 'p' + this.identifier;
-  this.data = data || null;
+  this.data = data || null;
   this.labels = labels;
   this.external = external;
 }
 
 function Edge(batch, id, source, predicate, target, data) {
 
-  var external = id || id === 0;
+  var external = id || id === 0;
 
   // Properties
   this.batch = batch;
-  this.id = id || null;
+  this.id = id || null;
   this.identifier = 'R' + (!external ? 'i' + (batch.edgesCounter++) : 'e' + id);
   this.param = 'p' + this.identifier;
   this.source = source;
@@ -109,7 +109,7 @@ Batch.prototype.create = function(data, labels) {
   this.nodes[node.identifier] = node;
 
   return node;
-}
+};
 
 // Updating a node
 Batch.prototype.update = function(node, data) {
@@ -125,14 +125,14 @@ Batch.prototype.update = function(node, data) {
 };
 
 // Setting a property
-Batch.prototype.set = function(id, key, value) {
+// Batch.prototype.set = function(id, key, value) {
 
-};
+// };
 
 // Removing a property
-Batch.prototype.remove = function(id, key) {
+// Batch.prototype.remove = function(id, key) {
 
-};
+// };
 
 // Relate two nodes
 Batch.prototype.relate = function(source, predicate, target, data) {
@@ -216,7 +216,7 @@ Batch.prototype.query = function() {
   });
 
   //-- Edges
-  this.edges.forEach(function(edge, i) {
+  this.edges.forEach(function(edge) {
     createSegment
       .create(relationshipPattern({
         direction: 'out',

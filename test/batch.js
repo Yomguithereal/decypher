@@ -11,8 +11,8 @@ describe('Batch', function() {
   it('should be possible to process coherent batches.', function() {
     var batch = new Batch();
 
-    var dairy  = batch.create({name: 'Dairy products'}, ['ClassifiedItem', 'ClassifiedProduct']),
-        milk   = batch.create({name: 'Milk'}, 'Item'),
+    var dairy = batch.create({name: 'Dairy products'}, ['ClassifiedItem', 'ClassifiedProduct']),
+        milk = batch.create({name: 'Milk'}, 'Item'),
         cheese = batch.create({name: 'Cheese'}, 'Item');
 
     batch.relate(dairy, 'AGGREGATES', milk);
