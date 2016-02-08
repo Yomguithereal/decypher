@@ -4,8 +4,9 @@
  *
  * Simple cypher batch abstraction used to save and relate series of nodes.
  */
-var isPlainObject = require('lodash.isplainobject'),
-    assign = require('lodash.assign'),
+var utils = require('./utils.js'),
+    isPlainObject = utils.isPlainObject,
+    assign = utils.assign,
     Query = require('./query.js'),
     helpers = require('./helpers.js');
 

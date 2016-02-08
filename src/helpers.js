@@ -4,7 +4,7 @@
  *
  * Miscellaneous helper functions.
  */
-var isPlainObject = require('lodash.isplainobject'),
+var isPlainObject = require('./utils.js').isPlainObject,
     escapeRegexp = require('escape-regexp'),
     syntax = require('./syntax.js');
 

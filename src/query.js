@@ -4,8 +4,9 @@
  *
  * Simple cypher query builder.
  */
-var assign = require('lodash.assign'),
-    isPlainObject = require('lodash.isplainobject');
+var utils = require('./utils.js'),
+    assign = utils.assign,
+    isPlainObject = utils.isPlainObject;
 
 var STATEMENTS = require('./syntax.js').STATEMENTS;
 
