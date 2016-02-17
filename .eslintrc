@@ -1,6 +1,0 @@
-{
-  "extends": "@yomguithereal/eslint-config",
-  "rules": {
-    "vars-on-top": 0
-  }
-}

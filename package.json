@@ -26,9 +26,18 @@
   },
   "homepage": "https://github.com/Yomguithereal/decypher",
   "devDependencies": {
+    "@yomguithereal/eslint-config": "^2.0.0",
+    "eslint": "^2.1.0",
     "mocha": "^2.1.0"
   },
   "dependencies": {
     "escape-regexp": "0.0.1"
+  },
+  "eslintConfig": {
+    "extends": "@yomguithereal/eslint-config",
+    "rules": {
+      "quote-props": 0,
+      "vars-on-top": 0
+    }
   }
 }
