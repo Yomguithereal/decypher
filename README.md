@@ -107,6 +107,8 @@ decypher('./folder');
 decypher('./path-to-queries-folder', 'cql');
 ```
 
+Now that if what you want is only to parse cypher strings because you retrieved the files on your, own, you can alternatively use `decypher.parse`.
+
 ## Query builder
 
 Note that this query builder is widely inspired by the [query-builder](https://github.com/shesek/cypher-query) package by [@shesek](https://github.com/shesek) but fixed and updated to support cypher's latest evolutions.
