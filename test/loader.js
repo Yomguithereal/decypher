@@ -130,5 +130,14 @@ describe('Loader', function() {
         }
       );
     });
+
+    it('should not fail to load files with leading comments.', function() {
+      assert.deepEqual(
+        decypher(__dirname + '/resources/commentedBeforeFirstName.cypher'),
+        {
+          query: 'MATCH n RETURN n;'
+        }
+      );
+    });
   });
 });

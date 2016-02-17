@@ -19,7 +19,7 @@ function parseBlock(block) {
   block.trim().split(/[\n\r]+/g).forEach(function(line) {
     var l = line.trim();
 
-    var nm = line.match(/\/\/\s+name:(.*)/i);
+    var nm = line.match(/\/\/\s*name:(.*)/i);
 
     // Name
     if (nm)
@@ -37,12 +37,16 @@ function parseBlock(block) {
 function parse(string) {
   var blocks;
 
-  if (~string.search(/\/\/\s?name:/i))
-    blocks = string.split(/(?=\/\/\s+name:)/ig);
+  if (/\/\/\s*name:/i.test(string))
+    blocks = string.split(/(?=\/\/\s*name:)/ig);
   else
     blocks = [string];
 
-  return blocks.map(parseBlock);
+  return blocks
+    .map(parseBlock)
+    .filter(function(data) {
+      return !!data.body;
+    });
 }
 
 function resolve(string, pathname) {
