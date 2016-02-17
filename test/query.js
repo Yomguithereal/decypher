@@ -8,6 +8,11 @@ var assert = require('assert'),
 
 describe('Query', function() {
 
+  it('should be possible to use new or not.', function() {
+    assert((new Query()) instanceof Query);
+    assert(Query() instanceof Query);
+  });
+
   it('should be possible to build a simple query.', function() {
     var query = new Query()
       .match('(n:Label)')

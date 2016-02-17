@@ -8,6 +8,11 @@ var assert = require('assert'),
 
 describe('Expression', function() {
 
+  it('should be possible to use new or not.', function() {
+    assert((new Expression()) instanceof Expression);
+    assert(Expression() instanceof Expression);
+  });
+
   it('should be possible to build a simple expression.', function() {
     var expr = new Expression();
 

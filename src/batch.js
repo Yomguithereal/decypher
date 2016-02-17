@@ -68,6 +68,9 @@ function Edge(batch, id, source, predicate, target, data) {
  */
 function Batch() {
 
+  if (!(this instanceof Batch))
+    return new Batch();
+
   // Counters & indexes
   this.nodesCounter = 0;
   this.edgesCounter = 0;

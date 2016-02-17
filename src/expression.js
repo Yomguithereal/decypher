@@ -10,6 +10,9 @@
  */
 function Expression(firstString) {
 
+  if (!(this instanceof Expression))
+    return new Expression(firstString);
+
   // Properties
   this._parts = [];
 

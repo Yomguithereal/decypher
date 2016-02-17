@@ -8,6 +8,11 @@ var assert = require('assert'),
 
 describe('Batch', function() {
 
+  it('should be possible to use new or not.', function() {
+    assert((new Batch()) instanceof Batch);
+    assert(Batch() instanceof Batch);
+  });
+
   it('should be possible to process coherent batches.', function() {
     var batch = new Batch();
 

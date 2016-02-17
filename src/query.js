@@ -22,6 +22,9 @@ function capitalize(string) {
  */
 function Query() {
 
+  if (!(this instanceof Query))
+    return new Query();
+
   // Properties
   this._segments = [];
   this._params = {};
