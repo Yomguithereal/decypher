@@ -52,7 +52,8 @@ var STATEMENTS = [
   'UNWIND',
   'USING INDEX',
   'WITH',
-  'WHERE'
+  'WHERE',
+  'WHERE NOT'
 ];
 
 var KEYWORDS = {};
