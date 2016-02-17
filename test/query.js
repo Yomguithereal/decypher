@@ -96,6 +96,20 @@ describe('Query', function() {
     });
   });
 
+  it('should be possible to retrieve/set a single parameter.', function() {
+    var query = new Query();
+
+    query
+      .start('n=node({id})', {id: 1})
+      .return('n');
+
+    assert.strictEqual(query.param('id'), 1);
+
+    query.param('id', 2);
+
+    assert.strictEqual(query.params().id, 2);
+  });
+
   it('should be possible to chain matches.', function() {
     var query = new Query()
       .match('(n:Label)')

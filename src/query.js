@@ -52,8 +52,10 @@ Query.prototype.compile = function() {
 };
 Query.prototype.toString = Query.prototype.compile;
 
-// Retrieving the query's parameters
+// Retrieving or setting the query's parameters
 Query.prototype.params = function(params) {
+
+  // Retrieving
   if (!params) {
     var additionalParams = this._segments
       .filter(function(segment) {
@@ -66,11 +68,27 @@ Query.prototype.params = function(params) {
     return assign.apply(null, additionalParams.concat(this._params));
   }
 
+  // Setting
   if (!isPlainObject(params))
     throw Error('decypher.Query.params: passed parameters should be a plain object.');
 
   assign(this._params, params);
   return this;
+};
+
+// Retrieving or setting a query's parameter
+Query.prototype.param = function(key, value) {
+
+  // Retrieving
+  if (arguments.length < 2) {
+    var params = this.params();
+    return params[key];
+  }
+
+  // Setting
+  var o = {};
+  o[key] = value;
+  return this.params(o);
 };
 
 // Building the query
