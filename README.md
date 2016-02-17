@@ -94,7 +94,6 @@ decypher({
 // folder/
 //   - single.cypher
 //   - multiple.cypher
-
 decypher('./folder');
 >>> {
   single: 'MATCH (n)-[r]-(t)\nRETURN n,r,t LIMIT 100;',
