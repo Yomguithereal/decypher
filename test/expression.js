@@ -24,4 +24,19 @@ describe('Expression', function() {
 
     assert.strictEqual(expr.compile(), 'a = b AND b = c');
   });
+
+  it('should be possible to nest expressions.', function() {
+    var expr = new Expression();
+
+    expr
+      .and('a = b')
+      .or((new Expression())
+        .or('b = c')
+        .or('c = d')
+        .and((new Expression()).and('bool2').or('bool2'))
+      )
+      .xor('d = e');
+
+    assert.strictEqual(expr.compile(), 'a = b OR (b = c OR c = d AND (bool2 OR bool2)) XOR d = e');
+  });
 });

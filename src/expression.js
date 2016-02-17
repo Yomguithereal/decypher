@@ -14,13 +14,13 @@ function Expression(firstString) {
   this._parts = [];
 
   if (firstString)
-    this._parts.push({operator: 'and', string: firstString});
+    this._parts.push({operator: 'and', value: firstString});
 }
 
 // Adding methods to the prototype
 ['and', 'or', 'xor'].forEach(function(operator) {
   Expression.prototype[operator] = function(string) {
-    this._parts.push({operator: operator, string: string});
+    this._parts.push({operator: operator, value: string});
     return this;
   };
 });
@@ -37,7 +37,11 @@ Expression.prototype.compile = function() {
 
     if (i)
       string += ' ' + part.operator.toUpperCase() + ' ';
-    string += part.string;
+
+    if (part.value instanceof Expression)
+      string += '(' + part.value.compile() + ')';
+    else
+      string += part.value;
   }
 
   return string;
