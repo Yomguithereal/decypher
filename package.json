@@ -1,6 +1,6 @@
 {
   "name": "decypher",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A handful of cypher utilities for Node.js",
   "main": "index.js",
   "scripts": {
