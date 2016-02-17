@@ -7,7 +7,8 @@
 It includes the following:
 
 * A [Yesql](https://github.com/krisajenkins/yesql)-like [query loader](#query-loader).
-* A simple [query builder](#query-builder).
+* A [query builder](#query-builder).
+* An [expression builder](#expression-builder).
 * Miscellaneous [helpers](#helpers).
   * [escapeIdentifier](#identifier)
   * [escapeLiteralMap](#literal-map)
@@ -152,6 +153,7 @@ cypher.orderBy('n.title');
 
 // You can also set a bunch of params at once
 cypher.params({whatever: 'is needed'});
+cypher.param('whatever', 'is needed');
 
 // If you need to pass multiple query parts at once & separated by a comma
 // just pass an array of strings instead of a single string.
@@ -173,6 +175,30 @@ start.match('(a:Actor)');
 cypher.compile();
 >>> `MATCH (a:Actor)
      RETURN a;`
+```
+
+## Expression builder
+
+The expression builder lets you build `where` expression easily:
+
+```js
+var Expression = require('decypher').Expression;
+
+var expr = new Expression('a = b');
+expr.and('c = d');
+
+expr.compile();
+// or
+expr.toString();
+>>> 'a = b AND c = d'
+
+// Note that you can nest expressions:
+var expr = new Expression('a = b');
+expr
+  .or(Expression('c = d').and('e = f'));
+
+expr.compile();
+>>> 'a = b OR (c = d AND e = f)'
 ```
 
 ## Helpers
