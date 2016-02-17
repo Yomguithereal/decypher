@@ -6,7 +6,8 @@
  */
 var utils = require('./utils.js'),
     assign = utils.assign,
-    isPlainObject = utils.isPlainObject;
+    isPlainObject = utils.isPlainObject,
+    Expression = require('./expression.js');
 
 var STATEMENTS = require('./syntax.js').STATEMENTS;
 
@@ -98,7 +99,7 @@ STATEMENTS.concat(['']).forEach(function(statement) {
     parts = [].concat(parts);
 
     var valid = parts.every(function(part) {
-      return typeof part === 'string';
+      return typeof part === 'string' || part instanceof Expression;
     });
 
     if (!valid)

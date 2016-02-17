@@ -4,7 +4,8 @@
  *
  */
 var assert = require('assert'),
-    Query = require('../index.js').Query;
+    Query = require('../index.js').Query,
+    Expression = require('../index.js').Expression;
 
 describe('Query', function() {
 
@@ -205,5 +206,27 @@ describe('Query', function() {
       one: 1,
       two: 2
     });
+  });
+
+  it('should be possible to use expressions.', function() {
+    var query = new Query(),
+        expr = new Expression();
+
+    expr
+      .and('f.year = 1997')
+      .and('a.name = "Pitt"');
+
+    query
+      .match('(f:Film)<-[:ACTS_IN]-(a:Actor)')
+      .where(expr)
+      .return('f');
+
+    var expected = [
+      'MATCH (f:Film)<-[:ACTS_IN]-(a:Actor)',
+      'WHERE f.year = 1997 AND a.name = "Pitt"',
+      'RETURN f'
+    ];
+
+    assert.deepEqual(query.statements(), expected);
   });
 });
