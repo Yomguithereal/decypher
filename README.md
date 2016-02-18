@@ -200,6 +200,9 @@ expr
 
 expr.compile();
 >>> 'a = b OR (c = d AND e = f)'
+
+expr.isEmpty();
+>>> false
 ```
 
 ## Helpers
