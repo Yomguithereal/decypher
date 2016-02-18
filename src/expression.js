@@ -17,7 +17,7 @@ function Expression(firstString) {
   this._parts = [];
 
   if (firstString)
-    this._parts.push({operator: 'and', value: firstString});
+    this.and(firstString);
 }
 
 // Adding methods to the prototype
