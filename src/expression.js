@@ -28,9 +28,15 @@ function Expression(firstString) {
   };
 });
 
+// Checking whether the expression is empty
+Expression.prototype.isEmpty = function() {
+  return !this.compile();
+};
+
 // Compiling the expression to string
 Expression.prototype.compile = function() {
   var string = '',
+      value,
       part,
       i,
       l;
@@ -38,13 +44,17 @@ Expression.prototype.compile = function() {
   for (i = 0, l = this._parts.length; i < l; i++) {
     part = this._parts[i];
 
-    if (i)
+    if (string)
       string += ' ' + part.operator.toUpperCase() + ' ';
 
-    if (part.value instanceof Expression)
-      string += '(' + part.value.compile() + ')';
-    else
+    if (part.value instanceof Expression) {
+      value = part.value.compile();
+      if (!!value)
+        string += '(' + value + ')';
+    }
+    else {
       string += part.value;
+    }
   }
 
   return string;

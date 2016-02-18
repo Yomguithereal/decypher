@@ -44,4 +44,18 @@ describe('Expression', function() {
 
     assert.strictEqual(expr.compile(), 'a = b OR (b = c OR c = d AND (bool2 OR bool2)) XOR d = e');
   });
+
+  it('should be possible to check whether an expression is empty.', function() {
+    var expr = new Expression();
+
+    assert(expr.isEmpty());
+
+    expr.and(Expression());
+
+    assert(expr.isEmpty());
+
+    expr.or('test');
+
+    assert.strictEqual(expr.compile(), 'test');
+  });
 });
