@@ -243,4 +243,21 @@ describe('Query', function() {
 
     assert.deepEqual(query.statements(), expected);
   });
+
+  it('passing invalid parts will throw an error.', function() {
+    var invalidParts = [
+      '',
+      null,
+      undefined,
+      new Expression()
+    ];
+
+    invalidParts.forEach(function(part) {
+      assert.throws(function() {
+        var query = new Query();
+
+        query.match(part);
+      }, /empty/);
+    });
+  });
 });

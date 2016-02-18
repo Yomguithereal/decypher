@@ -117,11 +117,13 @@ STATEMENTS.concat(['']).forEach(function(statement) {
     parts = [].concat(parts);
 
     var valid = parts.every(function(part) {
-      return typeof part === 'string' || part instanceof Expression;
+      return !!part &&
+             typeof part === 'string' ||
+             (part instanceof Expression && !part.isEmpty());
     });
 
     if (!valid)
-      throw Error('decypher.Query.' + methodName + ': first parameter should be a string.');
+      throw Error('decypher.Query.' + methodName + ': first parameter should not be falsy or empty.');
 
     var string = '';
 
