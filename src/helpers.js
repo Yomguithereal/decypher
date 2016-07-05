@@ -59,7 +59,10 @@ function nodePattern(opts) {
     pattern += escapeIdentifier(opts.identifier);
 
   if (opts.label)
-    pattern += ':' + escapeIdentifier(opts.label);
+    if (Array.isArray(opts.label))
+      pattern += ':' + opts.label.map(label => escapeIdentifier(label)).join(':');
+    else
+      pattern += ':' + escapeIdentifier(opts.label);
 
   if (opts.data) {
     if (opts.identifier || opts.label)
