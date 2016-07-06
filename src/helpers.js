@@ -60,7 +60,7 @@ function nodePattern(opts) {
 
   if (opts.label)
     if (Array.isArray(opts.label))
-      pattern += ':' + opts.label.map(label => escapeIdentifier(label)).join(':');
+      pattern += ':' + opts.label.map(escapeIdentifier).join(':');
     else
       pattern += ':' + escapeIdentifier(opts.label);
 
