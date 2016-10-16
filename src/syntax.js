@@ -22,6 +22,7 @@ flags.forEach(function(flag) {
 
 var STATEMENTS = [
   'ASSERT',
+  'CALL',
   'CASE',
   'CREATE',
   'CREATE CONSTRAINT ON',
@@ -71,7 +72,8 @@ var additionalKeywords = [
   'OR',
   'STARTS',
   'TRUE',
-  'XOR'
+  'XOR',
+  'YIELD'
 ];
 
 STATEMENTS.concat(additionalKeywords).forEach(function(statement) {
