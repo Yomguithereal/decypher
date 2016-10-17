@@ -171,6 +171,12 @@ cypher.add('with {param}', {param: 'heart'});
 
 // It's possible to directly pass an expression to the query builder:
 cypher.where(Expression('a').or('b'));
+>>> 'WHERE a OR b'
+
+// It's also possible to pass a descriptive object that will build a
+// relationship pattern using the `helpers.relationshipPattern` function:
+cypher.match({source: 'a', target: 'b', identifier: 'r', direction: 'out'});
+>>> 'MATCH (a)-[r]->(b)'
 
 // Finally, you can segment your query for convenience
 var cypher = new Query(),

@@ -260,4 +260,19 @@ describe('Query', function() {
       }, /empty/);
     });
   });
+
+  it('should be possible to pass descriptor objects.', function() {
+    var query = new Query();
+
+    query
+      .match({source: 'a', direction: 'out', target: 'b', identifier: 'r'})
+      .return('a');
+
+    var expected = [
+      'MATCH (a)-[r]->(b)',
+      'RETURN a'
+    ];
+
+    assert.deepEqual(query.statements(), expected);
+  });
 });

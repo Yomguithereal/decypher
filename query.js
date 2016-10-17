@@ -7,6 +7,8 @@
 var utils = require('./utils.js'),
     assign = utils.assign,
     isPlainObject = utils.isPlainObject,
+    helpers = require('./helpers.js'),
+    relationshipPattern = helpers.relationshipPattern,
     Expression = require('./expression.js');
 
 var STATEMENTS = require('./syntax.js').STATEMENTS;
@@ -119,11 +121,19 @@ STATEMENTS.concat(['']).forEach(function(statement) {
     var valid = parts.every(function(part) {
       return !!part &&
              typeof part === 'string' ||
-             (part instanceof Expression && !part.isEmpty());
+             (part instanceof Expression && !part.isEmpty()) ||
+             (!(part instanceof Expression) && isPlainObject(part));
     });
 
     if (!valid)
       throw Error('decypher.Query.' + methodName + ': first parameter should not be falsy or empty.');
+
+    // Solving objects as relationship patterns
+    parts = parts.map(function(part) {
+      if (typeof part !== 'string' && !(part instanceof Expression))
+        return relationshipPattern(part);
+      return part;
+    });
 
     var string = '';
 
