@@ -113,8 +113,22 @@ STATEMENTS.concat(['']).forEach(function(statement) {
     'add';
 
   Query.prototype[methodName] = function(parts, params) {
+    var inner = null;
+
+    // Solving arity 3
+    if (methodName === 'foreach') {
+      inner = params;
+      params = arguments[2];
+    }
+
     if (params && !isPlainObject(params))
-      throw Error('decypher.Query.add: second parameter should be a plain object.');
+      throw Error('decypher.Query.' + methodName + ': parameters should be a plain object.');
+
+    if (methodName === 'foreach' && !inner)
+      throw Error('decypher.Query.' + methodName + ': the FOREACH statement expects an inner query.');
+
+    if (inner && typeof inner !== 'string' && !(inner instanceof Query))
+      throw Error('decypher.Query.' + methodName + ': inner query should either be a string or another Query instance.');
 
     parts = [].concat(parts);
 
@@ -140,7 +154,19 @@ STATEMENTS.concat(['']).forEach(function(statement) {
     if (statement)
       string += statement + ' ';
 
-    string += parts.join(', ');
+    if (inner) {
+      string += '(' + parts.join(',');
+
+      if (inner instanceof Query) {
+        this.params(inner.params());
+        inner = inner.statements().join(' ');
+      }
+
+      string += ' | ' + inner + ')';
+    }
+    else {
+      string += parts.join(', ');
+    }
 
     this._segments.push(string);
 

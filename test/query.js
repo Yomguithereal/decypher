@@ -275,4 +275,34 @@ describe('Query', function() {
 
     assert.deepEqual(query.statements(), expected);
   });
+
+  it('foreach should have a specific behavior.', function() {
+    var query;
+
+    assert.throws(function() {
+      query = new Query();
+      query.foreach('a');
+    }, /FOREACH/);
+
+    assert.throws(function() {
+      query = new Query();
+      query.foreach('a', null);
+    }, /inner/);
+
+    query = new Query();
+    query.foreach('iterator IN list', 'MERGE (c)');
+
+    assert.deepEqual(query.statements(), ['FOREACH (iterator IN list | MERGE (c))']);
+
+    query = new Query();
+    query.foreach('iterator IN list', Query().merge('(c)'));
+
+    assert.deepEqual(query.statements(), ['FOREACH (iterator IN list | MERGE (c))']);
+
+    query = new Query();
+    query.foreach('iterator IN list', Query().merge('(c {props})', {props: {hello: 'world'}}));
+
+    assert.deepEqual(query.statements(), ['FOREACH (iterator IN list | MERGE (c {props}))']);
+    assert.deepEqual(query.params(), {props: {hello: 'world'}});
+  });
 });

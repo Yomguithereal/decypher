@@ -191,6 +191,23 @@ cypher.compile();
      RETURN a;`
 ```
 
+### Special cases
+
+#### FOREACH
+
+```js
+query.foreach(
+  'name IN {names}',
+  'CREATE (c:Person, {name: name})',
+  {names: ['John', 'Elizabeth']}
+);
+
+// Using a sub query (params will be merged into the main query)
+var subquery = new Query();
+subquery.create('(c:Person, {name: name})');
+query.foreach('name IN names', subquery, {names: [...]});
+```
+
 ## Expression builder
 
 The expression builder lets you build `where` expression easily:
