@@ -165,6 +165,9 @@ cypher.create(['(a:Actor)', '(m:Movie)']);
 cypher.add('anything you want');
 cypher.add('with {param}', {param: 'heart'});
 
+// It's possible to directly pass an expression to the query builder:
+cypher.where(Expression('a').or('b'));
+
 // Finally, you can segment your query for convenience
 var cypher = new Query(),
     start = cypher.segment(),
@@ -204,6 +207,8 @@ expr.compile();
 expr.isEmpty();
 >>> false
 ```
+
+Note that expressions can be directly fed to the [Query builder](#query-builder).
 
 ## Helpers
 
