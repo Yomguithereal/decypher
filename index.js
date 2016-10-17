@@ -4,11 +4,11 @@
  *
  * Exposing the library's modules.
  */
-var loader = require('./src/loader.js'),
-    helpers = require('./src/helpers.js'),
-    Batch = require('./src/batch.js'),
-    Expression = require('./src/expression.js'),
-    Query = require('./src/query.js');
+var loader = require('./loader.js'),
+    helpers = require('./helpers.js'),
+    Batch = require('./batch.js'),
+    Expression = require('./expression.js'),
+    Query = require('./query.js');
 
 // Version
 Object.defineProperty(loader, 'version', {

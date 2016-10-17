@@ -64,6 +64,8 @@ Just require **decypher** and use it to load your queries:
 
 ```js
 var decypher = require('decypher');
+// Or to only load the relevant code
+var decypher = require('decypher/loader');
 
 // Loading a single query
 decypher('./single-query.cypher');
@@ -117,6 +119,8 @@ The result object of the builder is also made to match **@thingdom** [node-neo4j
 
 ```js
 var Query = require('decypher').Query;
+// Or to only load the relevant code
+var Query = require('decypher/query');
 
 // Creating a query
 var cypher = new Query()
@@ -187,6 +191,8 @@ The expression builder lets you build `where` expression easily:
 
 ```js
 var Expression = require('decypher').Expression;
+// Or to only load the relevant code
+var Expression = require('decypher/expression');
 
 var expr = new Expression('a = b');
 expr.and('c = d');
@@ -216,6 +222,8 @@ Note that expressions can be directly fed to the [Query builder](#query-builder)
 
 ```js
 var helpers = require('decypher').helpers;
+// Or to only load the relevant code
+var helpers = require('decypher/helpers');
 
 helpers.escapeIdentifier('Complex `Identifier`');
 >>> '`Complex ``Identifier```'
@@ -225,6 +233,8 @@ helpers.escapeIdentifier('Complex `Identifier`');
 
 ```js
 var helpers = require('decypher').helpers;
+// Or to only load the relevant code
+var helpers = require('decypher/helpers');
 
 helpers.escapeLiteralMap({
   hello: 'world',
@@ -244,6 +254,8 @@ helpers.escapeLiteralMap({
 
 ```js
 var helpers = require('decypher').helpers;
+// Or to only load the relevant code
+var helpers = require('decypher/helpers');
 
 // Possible options are:
 //   * `identifier`: a string
@@ -290,6 +302,8 @@ helpers.nodePattern({
 
 ```js
 var helpers = require('decypher').helpers;
+// Or to only load the relevant code
+var helpers = require('decypher/helpers');
 
 // Possible options are:
 //   * `direction`: "in" or "out"
@@ -352,6 +366,8 @@ Note that it will escape for query for regular expression use through the [`esca
 
 ```js
 var helpers = require('decypher').helpers;
+// Or to only load the relevant code
+var helpers = require('decypher/helpers');
 
 // Possible options are:
 //   * `flags` [`'ius'`]: Flags for the regular expression.
