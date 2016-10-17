@@ -249,7 +249,8 @@ describe('Query', function() {
       '',
       null,
       undefined,
-      new Expression()
+      new Expression(),
+      []
     ];
 
     invalidParts.forEach(function(part) {

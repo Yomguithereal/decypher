@@ -139,7 +139,7 @@ STATEMENTS.concat(['']).forEach(function(statement) {
              (!(part instanceof Expression) && isPlainObject(part));
     });
 
-    if (!valid)
+    if (!valid || !parts.length)
       throw Error('decypher.Query.' + methodName + ': first parameter should not be falsy or empty.');
 
     // Solving objects as relationship patterns
