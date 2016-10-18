@@ -34,8 +34,8 @@ function Query() {
 }
 
 // Appending a segment to the query
-Query.prototype.segment = function() {
-  var query = new Query();
+Query.prototype.segment = function(inputQuery) {
+  var query = (inputQuery instanceof Query ? inputQuery : new Query());
 
   this._segments.push(query);
   return query;
