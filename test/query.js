@@ -313,6 +313,7 @@ describe('Query', function() {
     query
       .match('(n)')
       .where('id(n) = {id}', {id: 34})
+      .where('id(n) = {notFound}')
       .set('n += {object}', {object: {hello: 'world'}})
       .where('n.type IN {values}', {values: [1, 2, '3']});
 
@@ -321,6 +322,7 @@ describe('Query', function() {
     assert.deepEqual(interpolated.split('\n'), [
       'MATCH (n)',
       'WHERE id(n) = 34',
+      'WHERE id(n) = {notFound}',
       'SET n += {hello: "world"}',
       'WHERE n.type IN [1,2,"3"];'
     ]);
