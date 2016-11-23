@@ -153,6 +153,13 @@ cypher.statements();
 // Retrieving all of the above at once
 var {query, params, statements} = cypher.build();
 
+// You can also alternatively interpolate the params into the query
+// (Useful for debugging but unsafe!!!)
+cypher.interpolate();
+>>> `MATCH (n:Node)
+     WHERE n.title = "The best title"
+     RETURN n;`
+
 // Note that multi words statements like `ORDER BY` have to be written in camel-case:
 cypher.orderBy('n.title');
 
