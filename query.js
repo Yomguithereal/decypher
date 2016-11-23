@@ -9,9 +9,12 @@ var utils = require('./utils.js'),
     isPlainObject = utils.isPlainObject,
     helpers = require('./helpers.js'),
     relationshipPattern = helpers.relationshipPattern,
+    escapeLiteralMap = helpers.escapeLiteralMap,
     Expression = require('./expression.js');
 
 var STATEMENTS = require('./syntax.js').STATEMENTS;
+
+var INTERPOLATION_REGEX = /{([\w\d]+)}/g;
 
 /**
  * Helpers.
@@ -100,6 +103,25 @@ Query.prototype.build = function() {
     params: this.params(),
     statements: this.statements()
   };
+};
+
+// Interpolating the parameters within the query
+Query.prototype.interpolate = function() {
+  var string = this.compile(),
+      params = this.params();
+
+  return string.replace(INTERPOLATION_REGEX, function(match, identifier) {
+    if (params.hasOwnProperty(identifier)) {
+      var value = params[identifier];
+
+      if (typeof value === 'object' && !Array.isArray(value))
+        return escapeLiteralMap(value);
+      else
+        return JSON.stringify(value);
+    }
+
+    return match;
+  });
 };
 
 // Attaching a method to the prototype for each statement

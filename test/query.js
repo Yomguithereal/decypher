@@ -306,4 +306,23 @@ describe('Query', function() {
     assert.deepEqual(query.statements(), ['FOREACH (iterator IN list | MERGE (c {props}))']);
     assert.deepEqual(query.params(), {props: {hello: 'world'}});
   });
+
+  it('should be possible to interpolate the query.', function() {
+    var query = new Query();
+
+    query
+      .match('(n)')
+      .where('id(n) = {id}', {id: 34})
+      .set('n += {object}', {object: {hello: 'world'}})
+      .where('n.type IN {values}', {values: [1, 2, '3']});
+
+    var interpolated = query.interpolate();
+
+    assert.deepEqual(interpolated.split('\n'), [
+      'MATCH (n)',
+      'WHERE id(n) = 34',
+      'SET n += {hello: "world"}',
+      'WHERE n.type IN [1,2,"3"];'
+    ]);
+  });
 });
