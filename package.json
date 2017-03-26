@@ -4,7 +4,7 @@
   "description": "A handful of cypher utilities for Node.js",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint ./src ./test",
+    "lint": "eslint ./*.js ./test",
     "test": "mocha -R spec ./test"
   },
   "repository": {
@@ -31,7 +31,8 @@
     "mocha": "^3.1.2"
   },
   "dependencies": {
-    "escape-regexp": "0.0.1"
+    "escape-regexp": "0.0.1",
+    "graphology": "^0.7.0"
   },
   "eslintConfig": {
     "extends": "@yomguithereal/eslint-config",

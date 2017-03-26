@@ -113,7 +113,7 @@ Query.prototype.interpolate = function() {
       params = this.params();
 
   return string.replace(INTERPOLATION_REGEX, function(match, identifier) {
-    if (params.hasOwnProperty(identifier)) {
+    if (params.hasOwnProperty(identifier)) {
       var value = params[identifier];
 
       if (typeof value === 'object' && !Array.isArray(value))
