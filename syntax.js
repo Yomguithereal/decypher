@@ -57,6 +57,17 @@ var STATEMENTS = [
   'WHERE NOT'
 ];
 
+var emptyStatements = [
+  'UNION',
+  'UNION ALL'
+];
+
+var EMPTY_STATEMENTS = {};
+
+emptyStatements.forEach(function(statement) {
+  EMPTY_STATEMENTS[statement] = true;
+});
+
 var KEYWORDS = {};
 
 var additionalKeywords = [
@@ -84,4 +95,5 @@ STATEMENTS.concat(additionalKeywords).forEach(function(statement) {
 
 exports.REGEX_FLAGS = REGEX_FLAGS;
 exports.STATEMENTS = STATEMENTS;
+exports.EMPTY_STATEMENTS = EMPTY_STATEMENTS;
 exports.KEYWORDS = KEYWORDS;

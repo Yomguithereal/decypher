@@ -327,4 +327,17 @@ describe('Query', function() {
       'WHERE n.type IN [1,2,"3"];'
     ]);
   });
+
+  it('should be possible to use empty queries with some statements.', function() {
+    var query = new Query();
+
+    query
+      .union()
+      .unionAll();
+
+    assert.deepEqual(query.statements(), [
+      'UNION',
+      'UNION ALL'
+    ]);
+  });
 });

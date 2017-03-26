@@ -12,7 +12,9 @@ var utils = require('./utils.js'),
     escapeLiteralMap = helpers.escapeLiteralMap,
     Expression = require('./expression.js');
 
-var STATEMENTS = require('./syntax.js').STATEMENTS;
+var SYNTAX = require('./syntax.js'),
+    STATEMENTS = SYNTAX.STATEMENTS,
+    EMPTY_STATEMENTS = SYNTAX.EMPTY_STATEMENTS;
 
 var INTERPOLATION_REGEX = /{([\w\d]+)}/g;
 
@@ -134,6 +136,8 @@ STATEMENTS.concat(['']).forEach(function(statement) {
     tokens[0] + tokens.slice(1).map(capitalize).join('') :
     'add';
 
+  var emptyStatement = statement in EMPTY_STATEMENTS;
+
   Query.prototype[methodName] = function(parts, params) {
     var inner = null;
 
@@ -161,8 +165,13 @@ STATEMENTS.concat(['']).forEach(function(statement) {
              (!(part instanceof Expression) && isPlainObject(part));
     });
 
-    if (!valid || !parts.length)
+    if (!emptyStatement && (!valid || !parts.length))
       throw Error('decypher.Query.' + methodName + ': first parameter should not be falsy or empty.');
+
+    // Filtering falsy parts in case of empty query
+    parts = parts.filter(function(part) {
+      return part;
+    });
 
     // Solving objects as relationship patterns
     parts = parts.map(function(part) {
@@ -174,7 +183,7 @@ STATEMENTS.concat(['']).forEach(function(statement) {
     var string = '';
 
     if (statement)
-      string += statement + ' ';
+      string += statement + (parts.length ? ' ' : '');
 
     if (inner) {
       string += '(' + parts.join(',');
