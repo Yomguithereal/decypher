@@ -43,6 +43,7 @@ describe('Helpers', function() {
         '({name: "John"})',
         '(n {name: {name}})',
         '(:Label {params})',
+        '(n)',
         '(n)'
       ];
 
@@ -55,7 +56,8 @@ describe('Helpers', function() {
         {data: {name: 'John'}},
         {identifier: 'n', data: {name: 'name'}, paramKeys: ['name']},
         {label: 'Label', data: 'params'},
-        'n'
+        'n',
+        {identifier: 'n', labels: []}
       ];
 
       patterns.forEach(function(pattern, i) {
@@ -83,7 +85,9 @@ describe('Helpers', function() {
         '-[r {name: {name}}]->',
         '-[r:ONE|:TWO]->',
         '-[r]-',
-        '(a)-[:PLAYED_IN]->(m:Movie)'
+        '(a)-[:PLAYED_IN]->(m:Movie)',
+        '--',
+        '-[r]-'
       ];
 
       var descriptors = [
@@ -102,7 +106,9 @@ describe('Helpers', function() {
         {direction: 'out', identifier: 'r', data: {name: 'name'}, paramKeys: ['name']},
         {direction: 'out', identifier: 'r', types: ['ONE', 'TWO']},
         'r',
-        {source: 'a', direction: 'out', type: 'PLAYED_IN', target: {identifier: 'm', label: 'Movie'}}
+        {source: 'a', direction: 'out', type: 'PLAYED_IN', target: {identifier: 'm', label: 'Movie'}},
+        {types: []},
+        {identifier: 'r', types: []}
       ];
 
       patterns.forEach(function(pattern, i) {

@@ -242,7 +242,8 @@ Batch.prototype.query = function() {
     if (!attr.existing) {
       propsIdentifier = newNodePropsIdentifier(attr.id);
       pattern = {
-        identifier: node
+        identifier: node,
+        labels: attr.labels
       };
 
       if (Object.keys(attr.properties).length) {
@@ -272,7 +273,7 @@ Batch.prototype.query = function() {
         direction: 'out',
         source: source,
         target: target,
-        predicate: attr.type
+        type: attr.type
       };
 
       if (Object.keys(attr.properties).length) {

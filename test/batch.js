@@ -24,6 +24,6 @@ describe('Batch', function() {
     batch.createRelationship('WORKED_ON', source, target, {year: '2017'});
     batch.createRelationship('WORKED_ON', source, 34);
 
-    // console.log(batch.squery().build());
+    // console.log(batch.query().build());
   });
 });
