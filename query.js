@@ -208,4 +208,19 @@ STATEMENTS.concat(['']).forEach(function(statement) {
   };
 });
 
+// Convenient inspect method
+Query.prototype.inspect = function() {
+  var dummy = {
+    statements: this.statements(),
+    params: this.params()
+  };
+
+  Object.defineProperty(dummy, 'constructor', {
+    enumerable: false,
+    value: Query
+  });
+
+  return dummy;
+};
+
 module.exports = Query;

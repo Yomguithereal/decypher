@@ -61,4 +61,9 @@ Expression.prototype.compile = function() {
 };
 Expression.prototype.toString = Expression.prototype.compile;
 
+// Convenient inspect method
+Expression.prototype.inspect = function() {
+  return 'Expression (' + this.toString() + ')';
+};
+
 module.exports = Expression;
