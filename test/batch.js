@@ -17,12 +17,13 @@ describe('Batch', function() {
     var batch = new Batch();
 
     var source = batch.createNode('Developer', {name: 'Yomguithereal'}),
-        target = batch.createNode('Project', {name: 'Decypher'});
+        target = batch.createNode(['Project', 'Repository'], {name: 'Decypher'});
 
     batch.createNode();
 
     batch.createRelationship('WORKED_ON', source, target, {year: '2017'});
+    batch.createRelationship('WORKED_ON', source, 34);
 
-    // console.log(batch.query().build());
+    // console.log(batch.squery().build());
   });
 });

@@ -131,6 +131,20 @@ Batch.prototype.resolveNode = function(caller, representation) {
 
     return representation.identifier;
   }
+
+  // Existing node
+  if (typeof representation === 'string' ||
+      typeof representation === 'number') {
+    var identifier = existingNodeIdentifier(representation);
+
+    if (!this.graph.hasNode(identifier))
+      this.graph.addNode(identifier, {
+        id: representation,
+        existing: true
+      });
+
+    return identifier;
+  }
 };
 
 /**
@@ -202,6 +216,7 @@ Batch.prototype.query = function() {
   var query = new Query(),
       matchSegment = query.segment(),
       createSegment = query.segment(),
+      updateSegment = query.segment(),
       nodesToCreate = [],
       relationshipsToCreate = [];
 
@@ -236,6 +251,12 @@ Batch.prototype.query = function() {
       }
 
       nodesToCreate.push(helpers.nodePattern(pattern));
+    }
+    else {
+
+      // We need to match the node in the graph
+      matchSegment.match(helpers.nodePattern(node));
+      matchSegment.where('id(' + node + ') = ' + attr.id);
     }
   }
 

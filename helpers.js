@@ -47,6 +47,8 @@ function escapeLiteralMap(object, paramKeys) {
 function nodePattern(opts) {
   opts = opts || {};
 
+  var labels = opts.label || opts.labels;
+
   if (typeof opts === 'string')
     return nodePattern({identifier: opts});
 
@@ -58,14 +60,14 @@ function nodePattern(opts) {
   if (opts.identifier)
     pattern += escapeIdentifier(opts.identifier);
 
-  if (opts.label)
-    if (Array.isArray(opts.label))
-      pattern += ':' + opts.label.map(escapeIdentifier).join(':');
+  if (labels)
+    if (Array.isArray(labels))
+      pattern += ':' + labels.map(escapeIdentifier).join(':');
     else
-      pattern += ':' + escapeIdentifier(opts.label);
+      pattern += ':' + escapeIdentifier(labels);
 
   if (opts.data) {
-    if (opts.identifier || opts.label)
+    if (opts.identifier || labels)
       pattern += ' ';
 
     if (typeof opts.data === 'string')
@@ -87,6 +89,8 @@ function relationshipPattern(opts) {
   if (!isPlainObject(opts))
     throw Error('decypher.helpers.relationshipPattern: given options should be a plain object.');
 
+  var types = opts.type || opts.types;
+
   var pattern = '';
 
   if (opts.source)
@@ -97,19 +101,19 @@ function relationshipPattern(opts) {
   else
     pattern += '-';
 
-  if (opts.identifier || opts.predicate || opts.data) {
+  if (opts.identifier || types || opts.data) {
     pattern += '[';
 
     if (opts.identifier)
       pattern += escapeIdentifier(opts.identifier);
 
-    if (opts.predicate)
-      pattern += [].concat(opts.predicate).map(function(predicate) {
-        return ':' + escapeIdentifier(predicate);
+    if (types)
+      pattern += [].concat(types).map(function(type) {
+        return ':' + escapeIdentifier(type);
       }).join('|');
 
     if (opts.data) {
-      if (opts.identifier || opts.predicate)
+      if (opts.identifier || types)
         pattern += ' ';
 
       if (typeof opts.data === 'string')

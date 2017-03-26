@@ -51,7 +51,7 @@ describe('Helpers', function() {
         {identifier: 'n'},
         {identifier: 'n', label: 'Label'},
         {label: 'Label'},
-        {label: ['Label1', 'Label2']},
+        {labels: ['Label1', 'Label2']},
         {data: {name: 'John'}},
         {identifier: 'n', data: {name: 'name'}, paramKeys: ['name']},
         {label: 'Label', data: 'params'},
@@ -93,16 +93,16 @@ describe('Helpers', function() {
         {identifier: 'r'},
         {direction: 'in', identifier: 'r'},
         {direction: 'out', identifier: 'r'},
-        {direction: 'out', predicate: 'PREDICATE'},
-        {direction: 'in', identifier: 'r', predicate: 'PREDICATE'},
-        {identifier: 'r 1', predicate: 'COMPLEX PREDICATE'},
-        {direction: 'out', 'identifier': 'r', predicate: 'PREDICATE', data: 'param'},
+        {direction: 'out', type: 'PREDICATE'},
+        {direction: 'in', identifier: 'r', type: 'PREDICATE'},
+        {identifier: 'r 1', type: 'COMPLEX PREDICATE'},
+        {direction: 'out', 'identifier': 'r', type: 'PREDICATE', data: 'param'},
         {data: {name: 'John'}},
-        {direction: 'in', identifier: 'r', predicate: 'PREDICATE', data: {number: 1, name: 'John'}},
+        {direction: 'in', identifier: 'r', type: 'PREDICATE', data: {number: 1, name: 'John'}},
         {direction: 'out', identifier: 'r', data: {name: 'name'}, paramKeys: ['name']},
-        {direction: 'out', identifier: 'r', predicate: ['ONE', 'TWO']},
+        {direction: 'out', identifier: 'r', types: ['ONE', 'TWO']},
         'r',
-        {source: 'a', direction: 'out', predicate: 'PLAYED_IN', target: {identifier: 'm', label: 'Movie'}}
+        {source: 'a', direction: 'out', type: 'PLAYED_IN', target: {identifier: 'm', label: 'Movie'}}
       ];
 
       patterns.forEach(function(pattern, i) {

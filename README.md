@@ -289,7 +289,7 @@ var helpers = require('decypher/helpers');
 
 // Possible options are:
 //   * `identifier`: a string
-//   * `label`: a string
+//   * `label` or `labels`: a string or an array of strings
 //   * `data`:
 //       - if string, will produce a single parameter
 //       - if object, will stringify it
@@ -338,7 +338,7 @@ var helpers = require('decypher/helpers');
 // Possible options are:
 //   * `direction`: "in" or "out"
 //   * `identifier`: a string
-//   * `predicate`: a string or an array of strings
+//   * `type` or `types`: a string or an array of strings
 //   * `data`:
 //       - if string, will produce a single parameter
 //       - if object, will stringify it
@@ -355,13 +355,13 @@ helpers.relationshipPattern('r');
 helpers.relationshipPattern({
   direction: 'out',
   identifier: 'r',
-  predicate: 'KNOWS'
+  type: 'KNOWS'
 });
 >>> '-[r:KNOWS]->'
 
 helpers.relationshipPattern({
   direction: 'in',
-  predicate: ['PLAYS_IN', 'KNOWS']
+  types: ['PLAYS_IN', 'KNOWS']
 });
 >>> '<-[:PLAYS_IN|:KNOWS]-'
 
@@ -373,14 +373,14 @@ helpers.relationshipPattern({
 >>> '<-[r {paramName}]-'
 
 helpers.relationshipPattern({
-  predicate: 'KNOWS',
+  type: 'KNOWS',
   data: {since: 1975}
 });
 >>> '-[:KNOWS {since: 1975}]-'
 
 helpers.relationshipPattern({
   direction: 'out',
-  predicate: 'PLAYED_IN',
+  type: 'PLAYED_IN',
   source: 'a',
   target: {
     identifier: 'm',
