@@ -24,7 +24,7 @@ var MultiDirectedGraph = require('graphology').MultiDirectedGraph,
 // #.removeNodeProperty
 // #.setNodeProperty
 // #.removeNodeLabel
-// #.compile / #.build / #.params / #.statements
+// #.addNodeLabel
 
 /**
  * Helpers.
