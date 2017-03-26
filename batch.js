@@ -1,3 +1,4 @@
+/* eslint no-unused-vars: 0 */
 /**
  * Decypher Batch
  * ===============
@@ -25,6 +26,25 @@ var MultiDirectedGraph = require('graphology').MultiDirectedGraph,
 // #.setNodeProperty
 // #.removeNodeLabel
 // #.addNodeLabel
+
+/**
+ * Reference classes.
+ */
+function BatchNode(identifier) {
+  this.identifier = identifier;
+}
+
+BatchNode.prototype.toString = function() {
+  return this.identifier;
+};
+
+function BatchRelationship(identifier) {
+  this.identifier = identifier;
+}
+
+BatchRelationship.prototype.toString = function() {
+  return this.identifier;
+};
 
 /**
  * Helpers.
@@ -85,25 +105,6 @@ function existingEdgeIdentifier(id) {
 function hashLabels(labels) {
   return labels.join('§');
 }
-
-/**
- * Reference classes.
- */
-function BatchNode(identifier) {
-  this.identifier = identifier;
-}
-
-BatchNode.prototype.toString = function() {
-  return this.identifier;
-};
-
-function BatchRelationship(identifier) {
-  this.identifier = identifier;
-}
-
-BatchRelationship.prototype.toString = function() {
-  return this.identifier;
-};
 
 /**
  * Batch main class.
