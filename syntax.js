@@ -33,6 +33,7 @@ var STATEMENTS = [
   'DROP CONSTRAINT ON',
   'DROP INDEX ON',
   'ELSE',
+  'EXPLAIN',
   'FOREACH',
   'LIMIT',
   'LOAD CSV FROM',
@@ -42,6 +43,7 @@ var STATEMENTS = [
   'ON MATCH SET',
   'OPTIONAL MATCH',
   'ORDER BY',
+  'PROFILE',
   'REMOVE',
   'RETURN',
   'SET',
@@ -58,6 +60,8 @@ var STATEMENTS = [
 ];
 
 var emptyStatements = [
+  'EXPLAIN',
+  'PROFILE',
   'UNION',
   'UNION ALL'
 ];
