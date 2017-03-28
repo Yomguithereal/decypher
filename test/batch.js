@@ -61,6 +61,11 @@ describe('Batch', function() {
     batch.deleteNode(45);
 
     // We should have one node created and one deleted
-    // console.log(batch.graph, batch.query());
+    assert.deepEqual(batch.statements(), [
+      'MATCH (eN45)',
+      'WHERE id(eN45) = 45',
+      'CREATE (nN1:Student)',
+      'DETACH DELETE eN45'
+    ]);
   });
 });

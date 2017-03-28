@@ -10,7 +10,7 @@ var MultiDirectedGraph = require('graphology').MultiDirectedGraph,
     helpers = require('./helpers.js'),
     utils = require('./utils.js');
 
-// node or relationship can be created node ref. int or string, predicate (possibility to pass custom where) {labels?, where, properties}
+// node or relationship can be created node ref. int or string, predicate (possibility to pass custom where) {labels?, where, properties, source, target}
 
 // TODO: optimize the query
 // TODO: static method on batches for one-shot
@@ -254,6 +254,8 @@ Batch.prototype.deleteNode = function(representation) {
  * Building the batch's query.
  */
 Batch.prototype.query = function() {
+  var graph = this.graph;
+
   var query = new Query(),
       matchSegment = query.segment(),
       createSegment = query.segment(),
@@ -265,8 +267,8 @@ Batch.prototype.query = function() {
 
   var params = {};
 
-  var nodes = this.graph.nodes(),
-      edges = this.graph.edges();
+  var nodes = graph.nodes(),
+      edges = graph.edges();
 
   var node,
       edge,
@@ -280,7 +282,7 @@ Batch.prototype.query = function() {
 
   for (i = 0, l = nodes.length; i < l; i++) {
     node = nodes[i];
-    attr = this.graph.getNodeAttributes(node);
+    attr = graph.getNodeAttributes(node);
 
     if (!attr.existing) {
       propsIdentifier = newNodePropsIdentifier(attr.id);
@@ -299,8 +301,13 @@ Batch.prototype.query = function() {
     else {
 
       // First we need to match the node in the graph
-      matchSegment.match(helpers.nodePattern(node));
-      matchSegment.where('id(' + node + ') = ' + attr.id);
+      if (
+        graph.degree(node) > 0 ||
+        attr.toDelete
+      ) {
+        matchSegment.match(helpers.nodePattern(node));
+        matchSegment.where('id(' + node + ') = ' + attr.id);
+      }
 
       // Do we need to delete it?
       if (attr.toDelete)
@@ -310,9 +317,9 @@ Batch.prototype.query = function() {
 
   for (i = 0, l = edges.length; i < l; i++) {
     edge = edges[i];
-    source = this.graph.source(edge);
-    target = this.graph.target(edge);
-    attr = this.graph.getEdgeAttributes(edge);
+    source = graph.source(edge);
+    target = graph.target(edge);
+    attr = graph.getEdgeAttributes(edge);
 
     if (!attr.existing) {
       propsIdentifier = newEdgePropsIdentifier(attr.id);

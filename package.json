@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "escape-regexp": "0.0.1",
-    "graphology": "^0.7.0"
+    "graphology": "^0.7.1"
   },
   "eslintConfig": {
     "extends": "@yomguithereal/eslint-config",
