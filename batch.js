@@ -10,7 +10,7 @@ var MultiDirectedGraph = require('graphology').MultiDirectedGraph,
     helpers = require('./helpers.js'),
     utils = require('./utils.js');
 
-// node or relationship can be created node ref. int or string, predicate
+// node or relationship can be created node ref. int or string, predicate (possibility to pass custom where) {labels?, where, properties}
 
 // TODO: optimize the query
 // TODO: static method on batches for one-shot
@@ -57,9 +57,12 @@ function createIncrementalId() {
   };
 }
 
+// Testing the string so we don't interpolate things that are not an id.
+var ID_REGEX = /^\d+/g;
+
 function isValidNodeRepresentation(representation) {
   return (
-    typeof representation === 'string' ||
+    (typeof representation === 'string' && ID_REGEX.test(representation)) ||
     typeof representation === 'number' ||
     representation instanceof BatchNode ||
     utils.isPlainObject(representation)
@@ -68,7 +71,7 @@ function isValidNodeRepresentation(representation) {
 
 function isValidRelationshipRepresentation(representation) {
   return (
-    typeof representation === 'string' ||
+    (typeof representation === 'string' && ID_REGEX.test(representation)) ||
     typeof representation === 'number' ||
     representation instanceof BatchRelationship ||
     utils.isPlainObject(representation)
@@ -211,14 +214,53 @@ Batch.prototype.createRelationship = function(type, source, target, properties) 
 };
 
 /**
+ * Deleting a node.
+ */
+Batch.prototype.deleteNode = function(representation) {
+
+  if (!isValidNodeRepresentation(representation))
+    throw new Error('decypher.Batch.deleteNode: invalid source node. Expecting a Neo4j id, a node\'s reference in the batch or a predicate.');
+
+  // If the node exists in the graph, we just drop it from internal graph
+  if (representation instanceof BatchNode) {
+    if (!this.graph.hasNode(representation))
+      throw new Error('decypher.Batch.deleteNode: could not find given node in internal graph. This reference probably belongs to another batch.');
+    this.graph.dropNode(representation);
+  }
+
+  // If we are targeting an external node
+  else if (
+    typeof representation === 'string' ||
+    typeof representation === 'number'
+  ) {
+
+    var identifier = existingNodeIdentifier(representation);
+
+    if (!this.graph.hasNode(identifier))
+      this.graph.addNode(identifier, {
+        id: representation,
+        existing: true,
+        toDelete: true
+      });
+
+    // Dropping potential added edges
+    this.graph.dropEdges(this.graph.edges(identifier));
+  }
+
+  return this;
+};
+
+/**
  * Building the batch's query.
  */
 Batch.prototype.query = function() {
   var query = new Query(),
       matchSegment = query.segment(),
       createSegment = query.segment(),
+      deleteSegment = query.segment(),
       updateSegment = query.segment(),
       nodesToCreate = [],
+      nodesToDelete = [],
       relationshipsToCreate = [];
 
   var params = {};
@@ -256,9 +298,13 @@ Batch.prototype.query = function() {
     }
     else {
 
-      // We need to match the node in the graph
+      // First we need to match the node in the graph
       matchSegment.match(helpers.nodePattern(node));
       matchSegment.where('id(' + node + ') = ' + attr.id);
+
+      // Do we need to delete it?
+      if (attr.toDelete)
+        nodesToDelete.push(node);
     }
   }
 
@@ -292,9 +338,32 @@ Batch.prototype.query = function() {
   if (relationshipsToCreate.length)
     createSegment.create(relationshipsToCreate);
 
+  if (nodesToDelete.length)
+    deleteSegment.detachDelete(nodesToDelete);
+
   query.params(params);
 
   return query;
+};
+
+/**
+ * Bootstrapping some of the query's method for convenience.
+ */
+Batch.prototype.statements = function() {
+  return this.query().statements();
+};
+
+Batch.prototype.params = function() {
+  return this.query().params();
+};
+
+Batch.prototype.compile = function() {
+  return this.query().compile();
+};
+Batch.prototype.toString = Batch.prototype.compile;
+
+Batch.prototype.build = function() {
+  return this.query().build();
 };
 
 /**
