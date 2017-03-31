@@ -60,12 +60,33 @@ describe('Batch', function() {
     // Dropping and external node just works as expected
     batch.deleteNode(45);
 
-    // We should have one node created and one deleted
+    // We should have one node created and two deleted
     assert.deepEqual(batch.statements(), [
+      'MATCH (eN34)',
+      'WHERE id(eN34) = 34',
       'MATCH (eN45)',
       'WHERE id(eN45) = 45',
       'CREATE (nN1:Student)',
-      'DETACH DELETE eN45'
+      'DETACH DELETE eN34, eN45'
+    ]);
+  });
+
+  it('should be possible to delete a relationship.', function() {
+    var batch = new Batch();
+
+    var node1 = batch.createNode(),
+        node2 = batch.createNode();
+
+    var rel = batch.createRelationship('KNOWS', node1, node2);
+
+    batch.deleteRelationship(rel);
+    batch.deleteRelationship(34);
+
+    assert.deepEqual(batch.statements(), [
+      'MATCH ()-[eE34]->()',
+      'WHERE id(eE34) = 34',
+      'CREATE (nN0), (nN1)',
+      'DELETE eE34'
     ]);
   });
 });

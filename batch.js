@@ -119,6 +119,7 @@ function Batch() {
 
   // Properties
   this.graph = new MultiDirectedGraph();
+  this.relationshipsToDelete = {};
   this.generateNodeId = createIncrementalId();
   this.generateEdgeId = createIncrementalId();
 }
@@ -219,7 +220,7 @@ Batch.prototype.createRelationship = function(type, source, target, properties) 
 Batch.prototype.deleteNode = function(representation) {
 
   if (!isValidNodeRepresentation(representation))
-    throw new Error('decypher.Batch.deleteNode: invalid source node. Expecting a Neo4j id, a node\'s reference in the batch or a predicate.');
+    throw new Error('decypher.Batch.deleteNode: invalid node representation. Expecting a Neo4j id, a node\'s reference in the batch or a predicate.');
 
   // If the node exists in the graph, we just drop it from internal graph
   if (representation instanceof BatchNode) {
@@ -239,12 +240,42 @@ Batch.prototype.deleteNode = function(representation) {
     if (!this.graph.hasNode(identifier))
       this.graph.addNode(identifier, {
         id: representation,
-        existing: true,
-        toDelete: true
+        existing: true
       });
+
+    // Marking for deletion
+    this.graph.setNodeAttribute(identifier, 'toDelete', true);
 
     // Dropping potential added edges
     this.graph.dropEdges(this.graph.edges(identifier));
+  }
+
+  return this;
+};
+
+/**
+ * Deleting a relationship.
+ */
+Batch.prototype.deleteRelationship = function(representation) {
+  if (!isValidRelationshipRepresentation(representation))
+    throw new Error('decypher.Batch.deleteRelationship: invalid relationship representation. Expecting a Neo4j id, a relationship\'s reference in the batch or a predicate.');
+
+  // If the relationship exists in the graph, we just drop it from internal graph
+  if (representation instanceof BatchRelationship) {
+    if (!this.graph.hasEdge(representation))
+      throw new Error('decypher.Batch.deleteRelationship: could not find given relationship in internal graph. This reference probably belongs to another batch.');
+    this.graph.dropEdge(representation);
+  }
+
+  // If we are targeting an external node
+  else if (
+    typeof representation === 'string' ||
+    typeof representation === 'number'
+  ) {
+
+    var identifier = existingEdgeIdentifier(representation);
+
+    this.relationshipsToDelete[identifier] = representation;
   }
 
   return this;
@@ -263,6 +294,7 @@ Batch.prototype.query = function() {
       updateSegment = query.segment(),
       nodesToCreate = [],
       nodesToDelete = [],
+      relationshipsToDelete = [],
       relationshipsToCreate = [];
 
   var params = {};
@@ -339,6 +371,20 @@ Batch.prototype.query = function() {
     }
   }
 
+  // Collecting external relationships to delete
+  for (edge in this.relationshipsToDelete) {
+    matchSegment.match(helpers.relationshipPattern({
+      source: {identifier: ''},
+      target: {identifier: ''},
+      identifier: edge,
+      direction: 'out'
+    }));
+    matchSegment.where('id(' + edge + ') = ' + this.relationshipsToDelete[edge]);
+
+    relationshipsToDelete.push(edge);
+  }
+
+  // Appending statements at the correct position
   if (nodesToCreate.length)
     createSegment.create(nodesToCreate);
 
@@ -347,6 +393,9 @@ Batch.prototype.query = function() {
 
   if (nodesToDelete.length)
     deleteSegment.detachDelete(nodesToDelete);
+
+  if (relationshipsToDelete.length)
+    deleteSegment.delete(relationshipsToDelete);
 
   query.params(params);
 
